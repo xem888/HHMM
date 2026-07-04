@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="public/icon.svg" width="88" alt="HHMM logo" />
+<img src="src-tauri/icons/icon.png" width="96" alt="HHMM logo" />
 
 # HHMM — Human Host Mod Manager
 
