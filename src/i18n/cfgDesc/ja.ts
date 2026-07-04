@@ -1,0 +1,56 @@
+const d: Record<string, Record<string, string>> = {
+  "humanhost.admin.panel.cfg": {
+    OverrideFov: "FOV(視野角)を独自の値に上書きします。",
+    Fov: "カメラの視野角(度単位)。40~130 の範囲で指定できます。",
+    OverrideCamOffset: "カメラ位置のオフセット(右/上/後ろ)を上書きします。",
+    CamOffsetRight: "右(+)/左(-)方向のずらし幅(メートル)。-3~3 の範囲。",
+    CamOffsetUp: "上(+)/下(-)方向のずらし幅(メートル)。-2~8 の範囲。",
+    CamOffsetBack: "キャラクターの向きに沿った前後のずらし幅。後ろ(-)/前(+)、-10~5 の範囲(メートル)。",
+    Debuffs: "無効化したいデバフの ID をカンマ区切りで指定します。",
+    SavedPoints: "保存したテレポート地点。1 行につき 1 件で、name|x|y|z の形式で記述します。",
+    X: "パネル左上の X 座標。",
+    Y: "パネル左上の Y 座標。",
+    Width: "パネルの横幅。",
+    Height: "パネルの高さ。",
+  },
+  "humanhost.quickloot.cfg": {
+    EnableDebug: "変更しないでください。製作者がバグを調査するための専用オプションです。",
+    Hotkey: "周囲のアイテムをまとめて回収するキー。修飾キーにも対応しており、「X」や「LeftControl + X」のように指定できます。",
+    Radius: "プレイヤーを中心とした回収範囲(メートル)。2~40 の範囲で指定できます。",
+    GroundItems: "地面に落ちているアイテムを拾います。",
+    GroundResources: "通常は照準を合わせる必要がある、地面に出現した採取物も回収します。",
+    WorldContainers: "ワールドに配置されたコンテナを自動で漁ります。プレイヤーが設置した収納には一切手を付けません。",
+    ZombieCorpses: "倒したゾンビの死体を自動で漁ります。",
+  },
+  "humanhost.stack.customizer.cfg": {
+    ScanOnStartup: "開発者向けオプション。仕組みを理解している場合を除き、変更しないでください。Addressables のカタログ全体をスキャンしてアイテム一覧を書き出します(処理が重く、起動時に明らかな待ちが発生します)。製作者が、Mod に同梱する StackCustomizer_items.csv を生成するために使用します。プレイヤーは false のままにしてください。アイテムごとの上書きは Harmony パッチによって動作するため、スキャンは不要です。",
+    DumpItemList: "開発者向けオプション。ScanOnStartup が true のとき、検出したアイテム一覧を(全 14 言語の名称付きで)BepInEx/plugins/StackCustomizer_items.csv にも書き出します。",
+    Mode: "スタックの方式(いずれか一方のみ)。Unified はスタック可能な全アイテムに UnifiedMaxStack を適用します。Multiplier は各アイテム本来の MaxStack に Multiplier を掛け、MultiplierCap で上限を設けます。",
+    UnifiedMaxStack: "Mode = Unified のときに使用します。スタック可能な全アイテムの最大スタック数をこの値に統一します。1~99999 の範囲。",
+    Multiplier: "Mode = Multiplier のときに使用します。各アイテム本来の最大スタック数にこの値を掛けます。1~1000 の範囲。",
+    MultiplierCap: "Mode = Multiplier のときに使用します。安全のための上限値で、掛け算後の結果がこの値を超えないよう制限します。1~99999 の範囲。",
+  },
+  "humanhost.storagebox.expand.cfg": {
+    Columns: "1 行あたりの列数(バニラは 5、最大 12)。これより広いとバックパックを開いたときに UI が重なります。",
+    Rows: "全体の行数(バニラは 6)。初期設定の 10 行 × 10 列で 100 マスになります。6~200 の範囲。",
+    VisibleRows: "スクロールが始まるまでに表示する行数(バニラは 6、最大 10)。これより高いと画面からはみ出します。",
+    ScrollbarWidth: "スクロールバーの幅(ピクセル)。8~40 の範囲。",
+    ScrollSensitivity: "マウスホイールでスクロールする際の感度。5~100 の範囲。",
+  },
+  "humanhost.vehicle.tweaks.cfg": {
+    SolarMultiplier: "ソーラー発電機の充電速度の倍率。バニラでは好天候のときでも約 0.05 燃料/秒(3 秒ごとに 0.15 ずつ加算)で、燃料 1000 をためるのにゲーム内で約 5.5 時間かかり、しかも晴れた空の下の日中しか充電されません。x10 なら約 33 分。合計の充電量は、まだ満タンでない車両のエンジンすべてに均等に振り分けられます。1~200 の範囲。",
+    BicycleMultiplier: "ペダル(自転車)発電機の充電速度の倍率。バニラでは通常のペダリングで 0.3 燃料/秒、ダッシュで 0.6 燃料/秒(燃料 1000 で 55 分/28 分)です。x5 なら約 11 分/5.5 分。合計の充電量は、まだ満タンでない車両のエンジンすべてに均等に振り分けられます。1~100 の範囲。",
+    EnableRefillHotkey: "読み込み済みの車両エンジンすべてを、その場で一瞬で満タンにするホットキーを有効にします。",
+    RefillHotkey: "読み込み済みの車両エンジンをすべて満タンにするホットキー。値は Unity の KeyCode 名で、必要に応じて修飾キーを ' + ' でつないで指定します。例: End | Home | F5 | KeypadEnter | R + LeftControl | G + LeftAlt 。命名規則: 英字は A~Z、上段の数字は Alpha1~Alpha0、テンキーの数字は Keypad1~Keypad0、修飾キーは LeftControl/LeftShift/LeftAlt(または Right* 系)です。ゲームが既に使用しているキー(W/A/S/D、Space、Shift、F、H)や F12(Steam のスクリーンショット)は避けてください。",
+    EnableZoomRange: "車両に乗っている間、ホイールでのズームをどこまで引いたり寄せたりできるかを調整します。",
+    MaxDistance: "乗車中のカメラの最大距離(バニラは 8)。ホイールでどこまで引けるかを決めます。3~60 の範囲。",
+    MinDistance: "乗車中のカメラの最小距離(バニラはほぼ 0)。ホイールでどこまで寄せられるかを決めます。0~20 の範囲。",
+  },
+  "humanhost.backpack.expand.cfg": {
+    BagSlotCount: "バックパックの総マス数。バニラは 56 です。7 の倍数(56/63/70/…/203/210/…)を推奨します。56~1001 の範囲。",
+    ScrollbarWidth: "スクロールバーの幅(ピクセル)。8~40 の範囲。",
+    ScrollSensitivity: "マウスホイールでスクロールする際の感度。5~100 の範囲。",
+  },
+};
+
+export default d;

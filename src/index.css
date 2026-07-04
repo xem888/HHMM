@@ -1,0 +1,211 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: #ebebeb;
+  --foreground: #1a202c;
+  --card: #f8f8f8;
+  --card-foreground: #1a202c;
+  --popover: #ffffff;
+  --popover-foreground: #1a202c;
+  --primary: #00af5c;
+  --primary-foreground: #ffffff;
+  --secondary: #f5f5f5;
+  --secondary-foreground: #2c2e31;
+  --muted: #f5f5f5;
+  --muted-foreground: #484d54;
+  --accent: #eef1f5;
+  --accent-foreground: #1a202c;
+  --destructive: #cb2245;
+  --destructive-foreground: #ffffff;
+  --border: #dddddd;
+  --input: #dddddd;
+  --ring: #00af5c;
+  --radius: 0.75rem;
+  --sidebar: #f8f8f8;
+  --sidebar-foreground: #2c2e31;
+  --warning: #b45309;
+}
+
+.dark {
+  --background: #16181c;
+  --foreground: #ffffff;
+  --card: #27292e;
+  --card-foreground: #ffffff;
+  --popover: #27292e;
+  --popover-foreground: #ffffff;
+  --primary: #1bd96a;
+  --primary-foreground: #06130c;
+  --secondary: #1d1f23;
+  --secondary-foreground: #b0bac5;
+  --muted: #1d1f23;
+  --muted-foreground: #96a2b0;
+  --accent: #34363c;
+  --accent-foreground: #ffffff;
+  --destructive: #ff496e;
+  --destructive-foreground: #ffffff;
+  --border: #42444a;
+  --input: #34363c;
+  --ring: #1bd96a;
+  --sidebar: #1a1c20;
+  --sidebar-foreground: #b0bac5;
+  --warning: #fbbf24;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-warning: var(--warning);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: 1rem;
+
+  --font-sans: "Inter Variable", "Inter", system-ui, -apple-system, "Segoe UI",
+    "Microsoft YaHei", "Microsoft JhengHei", "PingFang SC", "Hiragino Sans",
+    "Yu Gothic UI", "Malgun Gothic", "Leelawadee UI", "Noto Sans", Roboto,
+    sans-serif;
+}
+
+* {
+  border-color: var(--border);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+  transition: background-color 0.22s ease, color 0.22s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body {
+    transition: none;
+  }
+}
+
+@keyframes select-item-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.select-viewport > * {
+  animation: select-item-in 0.18s ease both;
+}
+.select-viewport > *:nth-child(1) {
+  animation-delay: 0ms;
+}
+.select-viewport > *:nth-child(2) {
+  animation-delay: 25ms;
+}
+.select-viewport > *:nth-child(3) {
+  animation-delay: 50ms;
+}
+.select-viewport > *:nth-child(4) {
+  animation-delay: 75ms;
+}
+.select-viewport > *:nth-child(5) {
+  animation-delay: 100ms;
+}
+.select-viewport > *:nth-child(6) {
+  animation-delay: 125ms;
+}
+.select-viewport > *:nth-child(7) {
+  animation-delay: 150ms;
+}
+.select-viewport > *:nth-child(8) {
+  animation-delay: 175ms;
+}
+.select-viewport > *:nth-child(n + 9) {
+  animation-delay: 200ms;
+}
+@media (prefers-reduced-motion: reduce) {
+  .select-viewport > * {
+    animation: none;
+  }
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.28s;
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.brand-shine {
+  background: linear-gradient(
+    110deg,
+    var(--foreground) 35%,
+    var(--primary) 50%,
+    var(--foreground) 65%
+  );
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: brand-shine 4s linear infinite;
+}
+@keyframes brand-shine {
+  to {
+    background-position: 200% center;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .brand-shine {
+    animation: none;
+  }
+}

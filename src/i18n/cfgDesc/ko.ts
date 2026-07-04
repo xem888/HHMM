@@ -1,0 +1,56 @@
+const d: Record<string, Record<string, string>> = {
+  "humanhost.admin.panel.cfg": {
+    OverrideFov: "아래 FOV 값으로 기본 시야각을 덮어씁니다.",
+    Fov: "카메라 시야각입니다. 클수록 화면에 더 넓게 담깁니다(단위: 도).",
+    OverrideCamOffset: "아래 값으로 카메라 위치(오른쪽/위/뒤)를 직접 조정합니다.",
+    CamOffsetRight: "카메라를 오른쪽(+) 또는 왼쪽(-)으로 옮깁니다(단위: 미터).",
+    CamOffsetUp: "카메라를 위(+) 또는 아래(-)로 옮깁니다(단위: 미터).",
+    CamOffsetBack: "캐릭터가 바라보는 방향을 기준으로 카메라를 뒤(-) 또는 앞(+)으로 옮깁니다(단위: 미터).",
+    Debuffs: "면역을 적용할 디버프 ID 목록입니다. 쉼표로 구분해 입력하세요.",
+    SavedPoints: "저장해 둔 순간이동 지점입니다. 한 줄에 하나씩 name|x|y|z 형식으로 기록됩니다.",
+    X: "패널 왼쪽 위 모서리의 X 좌표입니다.",
+    Y: "패널 왼쪽 위 모서리의 Y 좌표입니다.",
+    Width: "패널의 너비입니다.",
+    Height: "패널의 높이입니다.",
+  },
+  "humanhost.quickloot.cfg": {
+    EnableDebug: "건드리지 마세요. 모드 제작자가 버그를 추적할 때만 쓰는 옵션입니다.",
+    Hotkey: "주변의 전리품을 한 번에 줍는 키입니다. 조합 키도 쓸 수 있습니다(예: \"X\" 또는 \"LeftControl + X\").",
+    Radius: "캐릭터를 중심으로 전리품을 주울 반경입니다(단위: 미터).",
+    GroundItems: "땅에 떨어진 아이템을 줍습니다.",
+    GroundResources: "원래는 조준해야 채집할 수 있는 바닥의 채집물까지 함께 가져옵니다.",
+    WorldContainers: "월드에 배치된 컨테이너를 자동으로 뒤집니다. 플레이어가 설치한 보관함은 절대 건드리지 않습니다.",
+    ZombieCorpses: "처치한 좀비 시체를 자동으로 뒤집니다.",
+  },
+  "humanhost.stack.customizer.cfg": {
+    ScanOnStartup: "개발자 전용 옵션 — 무엇을 하는지 정확히 알 때만 켜세요. Addressables 카탈로그 전체를 훑어 모든 아이템 목록을 추출합니다(느려서 시작할 때 눈에 띄게 멈칫합니다). 모드에 동봉된 StackCustomizer_items.csv를 제작자가 만들 때 쓰는 기능입니다. 플레이어는 false로 두세요. 아이템별 개별 설정은 Harmony 패치 덕분에 스캔 없이도 작동합니다.",
+    DumpItemList: "개발자 전용 옵션 — ScanOnStartup이 true일 때, 발견한 전체 아이템 목록을 14개 언어 이름과 함께 BepInEx/plugins/StackCustomizer_items.csv에 기록합니다.",
+    Mode: "스택 방식입니다(둘 중 하나만 적용). Unified — 스택 가능한 모든 아이템이 UnifiedMaxStack 값을 따릅니다. Multiplier — 각 아이템의 원래 MaxStack에 Multiplier를 곱하고 MultiplierCap으로 상한을 둡니다.",
+    UnifiedMaxStack: "Mode = Unified일 때 적용됩니다. 스택 가능한 모든 아이템의 최대 스택을 이 값으로 강제합니다.",
+    Multiplier: "Mode = Multiplier일 때 적용됩니다. 각 아이템의 원래 MaxStack에 이 값을 곱합니다.",
+    MultiplierCap: "Mode = Multiplier일 때 적용됩니다. 안전 상한값으로, 곱한 결과가 이 값을 넘지 않도록 제한합니다.",
+  },
+  "humanhost.storagebox.expand.cfg": {
+    Columns: "한 줄에 들어가는 칸 수입니다(기본값: 5, 최대 12 — 너무 넓으면 가방을 열 때 가방 UI와 겹칩니다).",
+    Rows: "전체 줄 수입니다(기본값: 6). 기본 설정은 10줄 × 10칸 = 100칸입니다.",
+    VisibleRows: "스크롤이 생기기 전에 한 번에 보이는 줄 수입니다(기본값: 6, 최대 10 — 너무 높으면 화면 밖으로 넘칩니다).",
+    ScrollbarWidth: "스크롤바의 너비입니다(단위: 픽셀).",
+    ScrollSensitivity: "마우스 휠 스크롤 감도입니다.",
+  },
+  "humanhost.vehicle.tweaks.cfg": {
+    SolarMultiplier: "태양광 발전기의 충전 속도 배율입니다. 기본값은 날씨가 가장 좋을 때 초당 약 0.05 연료(3초마다 0.15씩 한 번)라, 연료 1000을 채우는 데 게임 내 시간으로 약 5.5시간이 걸리고 머리 위 하늘이 맑은 낮에만 충전됩니다. x10이면 약 33분입니다. 전체 충전량은 차량에서 아직 가득 차지 않은 모든 엔진에 균등하게 나뉩니다.",
+    BicycleMultiplier: "페달(자전거) 발전기의 충전 속도 배율입니다. 기본값은 페달을 밟을 때 초당 0.3 연료, 전력 질주 시 초당 0.6 연료입니다(연료 1000 기준 55분 / 28분). x5이면 약 11분 / 5.5분입니다. 전체 충전량은 차량에서 아직 가득 차지 않은 모든 엔진에 균등하게 나뉩니다.",
+    EnableRefillHotkey: "로드된 모든 차량 엔진의 연료를 즉시 가득 채우는 단축키를 켭니다.",
+    RefillHotkey: "로드된 모든 차량 엔진의 연료를 가득 채우는 단축키입니다. 값은 Unity KeyCode 이름이며, 필요하면 ' + '로 조합 키를 이을 수 있습니다. 예: End | Home | F5 | KeypadEnter | R + LeftControl | G + LeftAlt . 표기 규칙: 알파벳은 A–Z, 상단 숫자줄은 Alpha1..Alpha0, 숫자패드는 Keypad1..Keypad0, 조합 키는 LeftControl/LeftShift/LeftAlt(또는 Right* 계열)입니다. 게임이 이미 쓰는 키(W/A/S/D, Space, Shift, F, H)와 F12(Steam 스크린샷)는 피하세요.",
+    EnableZoomRange: "차량에 탑승한 동안 휠로 줌인/줌아웃할 수 있는 범위를 직접 조절합니다.",
+    MaxDistance: "탑승 중 카메라를 뒤로 뺄 수 있는 최대 거리입니다(기본값 8). 휠을 굴려 얼마나 멀리 빠질 수 있는지 정합니다.",
+    MinDistance: "탑승 중 카메라를 당길 수 있는 최소 거리입니다(기본값 약 0). 휠을 굴려 얼마나 가까이 붙을 수 있는지 정합니다.",
+  },
+  "humanhost.backpack.expand.cfg": {
+    BagSlotCount: "가방의 전체 칸 수입니다. 기본값은 56이며, 7의 배수를 권장합니다(56/63/70/.../203/210/...).",
+    ScrollbarWidth: "스크롤바의 너비입니다(단위: 픽셀).",
+    ScrollSensitivity: "마우스 휠 스크롤 감도입니다.",
+  },
+};
+
+export default d;

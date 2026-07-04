@@ -1,0 +1,56 @@
+const d: Record<string, Record<string, string>> = {
+  "humanhost.admin.panel.cfg": {
+    OverrideFov: "开启后用下面的 FOV 数值覆盖游戏默认视野。",
+    Fov: "相机视野角度,数值越大看得越广(单位:度)。",
+    OverrideCamOffset: "开启后用下面三个数值把相机往右/上/后挪一挪。",
+    CamOffsetRight: "相机左右偏移:正数往右、负数往左(单位:米)。",
+    CamOffsetUp: "相机上下偏移:正数往上、负数往下(单位:米)。",
+    CamOffsetBack: "相机沿人物朝向前后偏移:正数往前、负数往后(单位:米)。",
+    Debuffs: "想免疫哪些负面状态,就把它们的 ID 填在这里,多个用逗号隔开。",
+    SavedPoints: "已保存的传送点,格式为 name|x|y|z,每行一个。",
+    X: "面板在屏幕上的位置:左上角的横坐标 X。",
+    Y: "面板在屏幕上的位置:左上角的纵坐标 Y。",
+    Width: "面板的宽度。",
+    Height: "面板的高度。",
+  },
+  "humanhost.quickloot.cfg": {
+    EnableDebug: "请保持默认,别动。这是 mod 作者排查 bug 用的开关。",
+    Hotkey: "一键捡走附近所有战利品的按键。可以用组合键,比如「X」或「LeftControl + X」。",
+    Radius: "以人物为中心、多大范围内的东西会被捡起来(单位:米)。",
+    GroundItems: "捡起掉落在地上的物品。",
+    GroundResources: "连那些平时得瞄准才能采的地面资源也一并收走。",
+    WorldContainers: "自动搜刮场景里的容器。你自己摆放的储物箱永远不会被动。",
+    ZombieCorpses: "自动搜刮被你击杀的僵尸尸体。",
+  },
+  "humanhost.stack.customizer.cfg": {
+    ScanOnStartup: "开发者选项 - 除非你清楚自己在做什么,否则请勿修改。会扫描整个 Addressables 目录以导出完整物品列表(很慢,启动时会明显卡顿)。mod 作者用它来生成随 mod 附带的 StackCustomizer_items.csv。玩家请保持 false。你在 [ItemOverrides] 段里单独给某个物品设的堆叠上限,靠 Harmony 补丁在运行时直接生效,不需要开启扫描。",
+    DumpItemList: "开发者选项 - 仅当 ScanOnStartup 开启时生效:把扫描到的完整物品列表(含全部 14 种语言的名称)写出到 BepInEx/plugins/StackCustomizer_items.csv。",
+    Mode: "堆叠模式,两种只能选一个。Unified(统一):所有能堆叠的物品上限都改成 UnifiedMaxStack 这个值。Multiplier(倍率):把每个物品自己的原始堆叠上限乘以 Multiplier,但最高不超过 MultiplierCap。",
+    UnifiedMaxStack: "在 Mode = Unified 时生效:把所有能堆叠的物品的堆叠上限都统一设成这个数。",
+    Multiplier: "在 Mode = Multiplier 时生效:每个物品的原始堆叠上限都乘以这个倍数。",
+    MultiplierCap: "在 Mode = Multiplier 时生效:一道保险——乘出来的结果再高也不会超过这个值。",
+  },
+  "humanhost.storagebox.expand.cfg": {
+    Columns: "每行排几列(原版 5,最多 12 — 再宽的话,开背包时会和背包界面叠在一起)。",
+    Rows: "一共多少行(原版 6)。默认 10 行 × 10 列 = 100 格。",
+    VisibleRows: "界面一屏显示几行、超出后才出滚动条(原版 6,最多 10 — 再高就会顶出屏幕)。",
+    ScrollbarWidth: "滚动条有多宽(单位:像素)。",
+    ScrollSensitivity: "鼠标滚轮的滚动灵敏度,数值越大滚得越快。",
+  },
+  "humanhost.vehicle.tweaks.cfg": {
+    SolarMultiplier: "太阳能发电机的充电速率倍率。原版在天气最好(大晴天)时约 0.05 燃料/秒(每 3 秒充 0.15),装满 1000 燃料要 5.5 个游戏小时,而且只在白天、头顶天空晴朗时才充。倍率调到 10 倍后约 33 分钟充满。这个总充电速率会平均分给车上所有还没充满的引擎。",
+    BicycleMultiplier: "脚蹬(自行车)发电机的充电速率倍率。原版正常踩是 0.3 燃料/秒、加速踩是 0.6 燃料/秒,装满 1000 燃料分别要 55 / 28 分钟。倍率调到 5 倍后约 11 / 5.5 分钟充满。这个总充电速率会平均分给车上所有还没充满的引擎。",
+    EnableRefillHotkey: "开启一个热键,按一下就把当前已加载的所有载具引擎瞬间加满燃料。",
+    RefillHotkey: "一键加满所有已加载载具引擎的热键。填 Unity KeyCode 名称,想用组合键就用「 + 」连接。例如: End | Home | F5 | KeypadEnter | R + LeftControl | G + LeftAlt 。命名规则:字母是 A-Z;主键盘上排数字是 Alpha1..Alpha0;小键盘数字是 Keypad1..Keypad0;修饰键是 LeftControl/LeftShift/LeftAlt(或对应的 Right* 版本)。注意避开游戏已经占用的键(W/A/S/D、Space、Shift、F、H)以及 F12(Steam 截图键)。",
+    EnableZoomRange: "开启后可自定义坐在车里时,相机用滚轮能拉远拉近的范围。",
+    MaxDistance: "坐车时相机最远能拉到多远(原版 8),也就是滚轮往外滚的极限。",
+    MinDistance: "坐车时相机最近能拉到多近(原版约 0),也就是滚轮往里滚的极限。",
+  },
+  "humanhost.backpack.expand.cfg": {
+    BagSlotCount: "背包一共多少格(原版 56)。建议填 7 的倍数,排出来更整齐(56/63/70/.../203/210/...)。",
+    ScrollbarWidth: "滚动条有多宽(单位:像素)。",
+    ScrollSensitivity: "鼠标滚轮的滚动灵敏度,数值越大滚得越快。",
+  },
+};
+
+export default d;

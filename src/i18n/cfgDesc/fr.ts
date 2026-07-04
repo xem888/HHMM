@@ -1,0 +1,56 @@
+const d: Record<string, Record<string, string>> = {
+  "humanhost.admin.panel.cfg": {
+    OverrideFov: "Permet d'imposer votre propre champ de vision au lieu de celui du jeu.",
+    Fov: "Champ de vision de la caméra, en degrés.",
+    OverrideCamOffset: "Permet de décaler la caméra à votre guise (droite, hauteur, recul).",
+    CamOffsetRight: "Décalage latéral, en mètres : valeur positive vers la droite, négative vers la gauche.",
+    CamOffsetUp: "Décalage vertical, en mètres : valeur positive vers le haut, négative vers le bas.",
+    CamOffsetBack: "Décalage dans l'axe du regard, en mètres : valeur positive vers l'avant, négative vers l'arrière.",
+    Debuffs: "Liste des effets néfastes contre lesquels vous restez immunisé, séparés par des virgules.",
+    SavedPoints: "Points de téléportation enregistrés, à raison d'un par ligne, au format nom|x|y|z.",
+    X: "Position horizontale du coin supérieur gauche du panneau.",
+    Y: "Position verticale du coin supérieur gauche du panneau.",
+    Width: "Largeur du panneau.",
+    Height: "Hauteur du panneau.",
+  },
+  "humanhost.quickloot.cfg": {
+    EnableDebug: "À ne pas modifier : réservé au débogage par l'auteur du mod.",
+    Hotkey: "Touche permettant de ramasser tout le butin alentour. Les combinaisons sont prises en charge, par exemple « X » ou « LeftControl + X ».",
+    Radius: "Rayon de ramassage autour du joueur, en mètres.",
+    GroundItems: "Ramasse les objets posés au sol.",
+    GroundResources: "Récupère les ressources au sol qui nécessitent normalement de viser.",
+    WorldContainers: "Pille automatiquement les conteneurs du monde. Vos propres rangements ne sont jamais touchés.",
+    ZombieCorpses: "Pille automatiquement les cadavres des zombies abattus.",
+  },
+  "humanhost.stack.customizer.cfg": {
+    ScanOnStartup: "OPTION DÉVELOPPEUR — À NE PAS MODIFIER sans savoir précisément ce que vous faites. Parcourt l'intégralité du catalogue Addressables pour extraire la liste complète des objets (opération lente qui provoque un net ralentissement au démarrage). L'auteur du mod s'en sert pour générer le fichier StackCustomizer_items.csv fourni avec le mod. Joueurs : laissez sur false. Grâce au correctif Harmony, les valeurs personnalisées par objet fonctionnent sans aucun balayage.",
+    DumpItemList: "OPTION DÉVELOPPEUR — Lorsque ScanOnStartup est activé, écrit également la liste complète des objets trouvés (avec leur nom dans les 14 langues) dans BepInEx/plugins/StackCustomizer_items.csv.",
+    Mode: "Mode d'empilement (les deux s'excluent mutuellement). Unified : chaque objet empilable adopte la valeur de UnifiedMaxStack. Multiplier : la pile maximale d'origine de chaque objet est multipliée par Multiplier, dans la limite de MultiplierCap.",
+    UnifiedMaxStack: "Utilisé lorsque Mode = Unified. Tous les objets empilables sont forcés à cette pile maximale.",
+    Multiplier: "Utilisé lorsque Mode = Multiplier. La pile maximale d'origine de chaque objet est multipliée par cette valeur.",
+    MultiplierCap: "Utilisé lorsque Mode = Multiplier. Plafond de sécurité : le résultat de la multiplication ne peut pas dépasser cette valeur.",
+  },
+  "humanhost.storagebox.expand.cfg": {
+    Columns: "Nombre de colonnes par rangée (5 dans le jeu de base, 12 au maximum) : au-delà, l'interface empiète sur celle du sac à dos lorsque vous l'ouvrez.",
+    Rows: "Nombre total de rangées (6 dans le jeu de base). Par défaut, 10 rangées × 10 colonnes, soit 100 emplacements.",
+    VisibleRows: "Nombre de rangées affichées avant l'apparition du défilement (6 dans le jeu de base, 10 au maximum) : au-delà, l'interface déborde de l'écran.",
+    ScrollbarWidth: "Largeur de la barre de défilement, en pixels.",
+    ScrollSensitivity: "Sensibilité du défilement à la molette de la souris.",
+  },
+  "humanhost.vehicle.tweaks.cfg": {
+    SolarMultiplier: "Multiplicateur de la vitesse de charge du générateur solaire. Dans le jeu de base, le rendement avoisine 0,05 carburant/s par temps idéal (un palier de 0,15 toutes les 3 secondes) : remplir 1000 unités de carburant demande donc près de 5 h 30 en temps de jeu, et la charge ne se fait qu'en plein jour, sous un ciel dégagé. Avec x10, comptez environ 33 minutes. Le débit total se répartit équitablement entre tous les moteurs encore incomplets du véhicule.",
+    BicycleMultiplier: "Multiplicateur de la vitesse de charge du générateur à pédales (vélo). Dans le jeu de base, le rendement est de 0,3 carburant/s en pédalant et de 0,6 carburant/s en sprintant (1000 unités = 55 / 28 minutes). Avec x5, comptez environ 11 / 5,5 minutes. Le débit total se répartit équitablement entre tous les moteurs encore incomplets du véhicule.",
+    EnableRefillHotkey: "Active un raccourci qui fait instantanément le plein de tous les moteurs de véhicules chargés.",
+    RefillHotkey: "Touche pour faire le plein de tous les moteurs de véhicules chargés. La valeur correspond à un nom de Unity KeyCode, éventuellement accompagné de modificateurs reliés par « + ». Exemples : End | Home | F5 | KeypadEnter | R + LeftControl | G + LeftAlt. Conventions de nommage : les lettres vont de A à Z ; les chiffres de la rangée du haut s'écrivent Alpha1 à Alpha0 ; ceux du pavé numérique, Keypad1 à Keypad0 ; les modificateurs sont LeftControl/LeftShift/LeftAlt (ou leurs variantes Right*). Évitez les touches déjà utilisées par le jeu (W/A/S/D, Espace, Maj, F, H) ainsi que F12 (capture d'écran Steam).",
+    EnableZoomRange: "Personnalise l'amplitude du zoom à la molette lorsque vous êtes installé dans un véhicule.",
+    MaxDistance: "Distance maximale de la caméra en position assise (8 dans le jeu de base) : jusqu'où vous pouvez éloigner la vue à la molette.",
+    MinDistance: "Distance minimale de la caméra en position assise (proche de 0 dans le jeu de base) : jusqu'où vous pouvez rapprocher la vue à la molette.",
+  },
+  "humanhost.backpack.expand.cfg": {
+    BagSlotCount: "Nombre total d'emplacements du sac à dos. Le jeu de base en compte 56. Il est conseillé d'utiliser des multiples de 7 (56/63/70/.../203/210/...).",
+    ScrollbarWidth: "Largeur de la barre de défilement, en pixels.",
+    ScrollSensitivity: "Sensibilité du défilement à la molette de la souris.",
+  },
+};
+
+export default d;

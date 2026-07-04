@@ -1,0 +1,56 @@
+const d: Record<string, Record<string, string>> = {
+  "humanhost.admin.panel.cfg": {
+    OverrideFov: "開啟後改用你自訂的視野（FOV），不再沿用遊戲預設值。",
+    Fov: "相機的視野角度，單位為度。數值越大，畫面看到的範圍越廣。",
+    OverrideCamOffset: "開啟後可自訂相機相對角色的位置偏移（右／上／後三個方向）。",
+    CamOffsetRight: "相機往右（正值）或往左（負值）平移的距離，單位為公尺。",
+    CamOffsetUp: "相機往上（正值）或往下（負值）平移的距離，單位為公尺。",
+    CamOffsetBack: "相機沿角色面向往後（負值）或往前（正值）移動的距離，單位為公尺。",
+    Debuffs: "要免疫的負面狀態 ID 清單，以逗號分隔。",
+    SavedPoints: "已儲存的傳送點，格式為 name|x|y|z，每行一筆。",
+    X: "面板左上角的 X 座標。",
+    Y: "面板左上角的 Y 座標。",
+    Width: "面板寬度。",
+    Height: "面板高度。",
+  },
+  "humanhost.quickloot.cfg": {
+    EnableDebug: "請勿更動。此選項僅供作者除錯使用。",
+    Hotkey: "一鍵拾取附近所有戰利品的按鍵。可搭配組合鍵，例如「X」或「LeftControl + X」。",
+    Radius: "以角色為中心的拾取範圍半徑，單位為公尺。",
+    GroundItems: "拾取掉落在地上的物品。",
+    GroundResources: "連同那些平常得瞄準才能採集的地面資源一併拾取。",
+    WorldContainers: "自動搜刮場景中的容器；玩家自己擺放的儲物箱絕不會被動到。",
+    ZombieCorpses: "自動搜刮被擊殺的殭屍屍體。",
+  },
+  "humanhost.stack.customizer.cfg": {
+    ScanOnStartup: "開發者選項——除非你清楚自己在做什麼，否則請勿更動。此選項會掃描整份 Addressables 目錄以匯出完整物品清單（過程很慢，啟動時會明顯卡頓），作者用它來產生隨模組附帶的 StackCustomizer_items.csv。一般玩家請保持 false：靠 Harmony patch，個別物品的覆寫設定不必掃描也能生效。",
+    DumpItemList: "開發者選項——當 ScanOnStartup 為 true 時，會把掃描到的完整物品清單（含 14 種語言的名稱）一併寫入 BepInEx/plugins/StackCustomizer_items.csv。",
+    Mode: "堆疊模式，兩者只能擇一。Unified：所有可堆疊物品一律採用 UnifiedMaxStack。Multiplier：以各物品原本的 MaxStack 乘上 Multiplier，並受 MultiplierCap 上限約束。",
+    UnifiedMaxStack: "Mode = Unified 時生效。所有可堆疊物品的最大堆疊數都會被統一強制為此數值。",
+    Multiplier: "Mode = Multiplier 時生效。各物品原本的 MaxStack 會乘上這個倍數。",
+    MultiplierCap: "Mode = Multiplier 時生效。為安全上限，相乘後的結果不會超過此數值。",
+  },
+  "humanhost.storagebox.expand.cfg": {
+    Columns: "每排的欄數（原版為 5，最多 12）。設得太寬，開背包時會和背包介面重疊。",
+    Rows: "總排數（原版為 6）。預設 10 排 × 10 欄，共 100 格。",
+    VisibleRows: "出現捲軸前可直接顯示的排數（原版為 6，最多 10）。設得太高畫面會放不下。",
+    ScrollbarWidth: "捲軸寬度，單位為像素。",
+    ScrollSensitivity: "滑鼠滾輪的捲動靈敏度。",
+  },
+  "humanhost.vehicle.tweaks.cfg": {
+    SolarMultiplier: "太陽能發電機的充電速率倍數。原版在天氣最佳時約為 0.05 燃料/秒（每 3 秒跳一次 0.15），充滿 1000 燃料約需 5.5 個遊戲內小時，且僅在白天晴空下才會充電。設為 x10 約需 33 分鐘。總速率會平均分配給車上所有尚未充滿的引擎。",
+    BicycleMultiplier: "腳踏（單車）發電機的充電速率倍數。原版踩踏為 0.3 燃料/秒、衝刺為 0.6 燃料/秒（充滿 1000 燃料分別需 55 / 28 分鐘）。設為 x5 約需 11 / 5.5 分鐘。總速率會平均分配給車上所有尚未充滿的引擎。",
+    EnableRefillHotkey: "啟用一個熱鍵，按下後立即把所有已載入的車輛引擎加滿燃料。",
+    RefillHotkey: "把所有已載入的車輛引擎一次加滿燃料的熱鍵。數值為 Unity KeyCode 名稱，可用「 + 」串接修飾鍵。範例： End  |  Home  |  F5  |  KeypadEnter  |  R + LeftControl  |  G + LeftAlt 。命名規則：字母為 A-Z；主鍵盤上排數字為 Alpha1..Alpha0；數字鍵盤為 Keypad1..Keypad0；修飾鍵為 LeftControl/LeftShift/LeftAlt（或對應的 Right* 版本）。請避開遊戲已佔用的按鍵（W/A/S/D、Space、Shift、F、H）以及 F12（Steam 截圖鍵）。",
+    EnableZoomRange: "自訂坐在車內時，相機滾輪縮放的可調範圍。",
+    MaxDistance: "坐在車內時相機的最遠距離（原版為 8），也就是滾輪最多能把鏡頭拉多遠。",
+    MinDistance: "坐在車內時相機的最近距離（原版約為 0），也就是滾輪最多能把鏡頭推多近。",
+  },
+  "humanhost.backpack.expand.cfg": {
+    BagSlotCount: "背包的總格子數。原版為 56。建議設為 7 的倍數（56/63/70/…/203/210/…）。",
+    ScrollbarWidth: "捲軸寬度，單位為像素。",
+    ScrollSensitivity: "滑鼠滾輪的捲動靈敏度。",
+  },
+};
+
+export default d;

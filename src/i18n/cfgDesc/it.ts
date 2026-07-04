@@ -1,0 +1,56 @@
+const d: Record<string, Record<string, string>> = {
+  "humanhost.admin.panel.cfg": {
+    OverrideFov: "Attiva un valore di FOV personalizzato.",
+    Fov: "Campo visivo della telecamera, espresso in gradi.",
+    OverrideCamOffset: "Attiva uno scostamento personalizzato della telecamera (destra/su/indietro).",
+    CamOffsetRight: "Scostamento verso destra (+) o sinistra (-), in metri.",
+    CamOffsetUp: "Scostamento verso l'alto (+) o il basso (-), in metri.",
+    CamOffsetBack: "Scostamento indietro (-) o avanti (+) lungo la direzione in cui guarda il personaggio, in metri.",
+    Debuffs: "Elenco di ID degli effetti negativi a cui restare immuni, separati da virgola.",
+    SavedPoints: "Punti di teletrasporto salvati, uno per riga, nel formato nome|x|y|z.",
+    X: "Posizione X dell'angolo in alto a sinistra del pannello.",
+    Y: "Posizione Y dell'angolo in alto a sinistra del pannello.",
+    Width: "Larghezza del pannello.",
+    Height: "Altezza del pannello.",
+  },
+  "humanhost.quickloot.cfg": {
+    EnableDebug: "Non modificare: serve solo all'autore della mod per il debug.",
+    Hotkey: "Tasto per raccogliere tutto il bottino nelle vicinanze. Supporta i modificatori, ad esempio «X» oppure «LeftControl + X».",
+    Radius: "Raggio di raccolta attorno al personaggio, in metri.",
+    GroundItems: "Raccoglie gli oggetti caduti a terra.",
+    GroundResources: "Raccoglie le risorse a terra che di norma richiedono di essere inquadrate per essere raccolte.",
+    WorldContainers: "Saccheggia automaticamente i contenitori sparsi nel mondo. I depositi piazzati dal giocatore non vengono mai toccati.",
+    ZombieCorpses: "Saccheggia automaticamente i cadaveri degli zombie uccisi.",
+  },
+  "humanhost.stack.customizer.cfg": {
+    ScanOnStartup: "OPZIONE PER SVILUPPATORI – NON MODIFICARE se non sai esattamente cosa fai. Analizza l'intero catalogo Addressables per estrarre la lista completa degli oggetti (operazione lenta, con un evidente rallentamento all'avvio). L'autore della mod la usa per generare il file StackCustomizer_items.csv incluso nel pacchetto. Per i giocatori: lascia il valore su false. Grazie alla patch Harmony, le modifiche per singolo oggetto funzionano anche senza l'analisi.",
+    DumpItemList: "OPZIONE PER SVILUPPATORI – Quando ScanOnStartup è true, salva anche la lista completa degli oggetti trovati (con i nomi in tutte e 14 le lingue) in BepInEx/plugins/StackCustomizer_items.csv.",
+    Mode: "Modalità di impilamento (mutuamente esclusive). Unified: ogni oggetto impilabile usa il valore di UnifiedMaxStack. Multiplier: il MaxStack originale di ciascun oggetto viene moltiplicato per Multiplier e limitato da MultiplierCap.",
+    UnifiedMaxStack: "Usato quando Mode = Unified. Ogni oggetto impilabile viene forzato a questo MaxStack.",
+    Multiplier: "Usato quando Mode = Multiplier. Il MaxStack originale di ciascun oggetto viene moltiplicato per questo valore.",
+    MultiplierCap: "Usato quando Mode = Multiplier. Limite di sicurezza: il risultato della moltiplicazione viene riportato entro questo valore.",
+  },
+  "humanhost.storagebox.expand.cfg": {
+    Columns: "Colonne per riga (originale: 5, massimo 12; valori più alti si sovrappongono all'interfaccia dello zaino quando lo apri).",
+    Rows: "Numero totale di righe (originale: 6). L'impostazione predefinita è 10 righe × 10 colonne = 100 caselle.",
+    VisibleRows: "Righe mostrate prima che entri in funzione lo scorrimento (originale: 6, massimo 10; valori più alti escono dallo schermo).",
+    ScrollbarWidth: "Larghezza della barra di scorrimento, in pixel.",
+    ScrollSensitivity: "Sensibilità dello scorrimento con la rotellina del mouse.",
+  },
+  "humanhost.vehicle.tweaks.cfg": {
+    SolarMultiplier: "Moltiplicatore della velocità di ricarica del generatore solare. Di base è circa 0,05 unità di carburante al secondo con clima ottimale (un incremento di 0,15 ogni 3 secondi), quindi 1000 di carburante richiedono circa 5,5 ore di gioco e la ricarica avviene solo di giorno e a cielo sereno. Con x10 servono circa 33 minuti. La velocità complessiva viene ripartita equamente tra tutti i motori del veicolo non ancora carichi.",
+    BicycleMultiplier: "Moltiplicatore della velocità di ricarica del generatore a pedali (bicicletta). Di base è 0,3 unità di carburante al secondo pedalando e 0,6 scattando (1000 di carburante = 55 / 28 minuti). Con x5 servono circa 11 / 5,5 minuti. La velocità complessiva viene ripartita equamente tra tutti i motori del veicolo non ancora carichi.",
+    EnableRefillHotkey: "Attiva un tasto rapido che riempie all'istante il carburante di tutti i motori dei veicoli caricati.",
+    RefillHotkey: "Tasto per riempire al massimo il carburante di tutti i motori dei veicoli caricati. Il valore è il nome di un Unity KeyCode, eventualmente con modificatori uniti da « + ». Esempi: End | Home | F5 | KeypadEnter | R + LeftControl | G + LeftAlt. Nomenclatura: le lettere vanno da A a Z; le cifre della fila superiore sono Alpha1..Alpha0; quelle del tastierino numerico sono Keypad1..Keypad0; i modificatori sono LeftControl/LeftShift/LeftAlt (o le varianti Right*). Evita i tasti già usati dal gioco (W/A/S/D, Space, Shift, F, H) e F12 (screenshot di Steam).",
+    EnableZoomRange: "Personalizza la distanza massima di zoom della telecamera con la rotellina quando sei a bordo di un veicolo.",
+    MaxDistance: "Distanza massima della telecamera a bordo del veicolo (originale: 8). Indica quanto puoi allontanare la visuale scorrendo la rotellina.",
+    MinDistance: "Distanza minima della telecamera a bordo del veicolo (originale: circa 0). Indica quanto puoi avvicinare la visuale scorrendo la rotellina.",
+  },
+  "humanhost.backpack.expand.cfg": {
+    BagSlotCount: "Numero totale di caselle dello zaino. Di base sono 56. Si consigliano multipli di 7 (56/63/70/.../203/210/...).",
+    ScrollbarWidth: "Larghezza della barra di scorrimento, in pixel.",
+    ScrollSensitivity: "Sensibilità dello scorrimento con la rotellina del mouse.",
+  },
+};
+
+export default d;

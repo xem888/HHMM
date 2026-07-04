@@ -1,0 +1,56 @@
+const d: Record<string, Record<string, string>> = {
+  "humanhost.admin.panel.cfg": {
+    OverrideFov: "Oyunun varsayılan görüş açısını yok sayıp kendi FOV değerinizi kullanır.",
+    Fov: "Kameranın görüş açısı (derece cinsinden).",
+    OverrideCamOffset: "Kamerayı sağa, yukarı ya da geriye doğru kaydırarak konumunu kendiniz ayarlamanızı sağlar.",
+    CamOffsetRight: "Kamerayı sağa (+) ya da sola (-) kaydırır (metre cinsinden).",
+    CamOffsetUp: "Kamerayı yukarı (+) ya da aşağı (-) kaydırır (metre cinsinden).",
+    CamOffsetBack: "Kamerayı karakterin baktığı yöne göre geriye (-) ya da ileriye (+) kaydırır (metre cinsinden).",
+    Debuffs: "Bağışık olunacak olumsuz etkilerin kimlikleri. Birden fazlasını virgülle ayırarak yazın.",
+    SavedPoints: "Kayıtlı ışınlanma noktaları. Her satıra bir tane gelecek şekilde ad|x|y|z biçiminde yazılır.",
+    X: "Panelin sol üst köşesinin yatay (X) konumu.",
+    Y: "Panelin sol üst köşesinin dikey (Y) konumu.",
+    Width: "Panelin genişliği.",
+    Height: "Panelin yüksekliği.",
+  },
+  "humanhost.quickloot.cfg": {
+    EnableDebug: "Dokunmayın. Yalnızca mod geliştiricisinin hata ayıklaması içindir.",
+    Hotkey: "Yakındaki tüm eşyaları tek tuşla toplamanızı sağlayan tuş. Birleşik tuşlar da desteklenir; örneğin \"X\" ya da \"LeftControl + X\".",
+    Radius: "Karakterin çevresinde eşyaların toplanacağı yarıçap (metre cinsinden).",
+    GroundItems: "Yere düşmüş eşyaları toplar.",
+    GroundResources: "Normalde nişan alıp toplamanız gereken, yerdeki kaynakları da otomatik toplar.",
+    WorldContainers: "Dünyadaki sandık ve dolapları otomatik boşaltır. Sizin yerleştirdiğiniz depolara asla dokunmaz.",
+    ZombieCorpses: "Öldürdüğünüz zombilerin üzerini otomatik olarak yağmalar.",
+  },
+  "humanhost.stack.customizer.cfg": {
+    ScanOnStartup: "GELİŞTİRİCİ SEÇENEĞİ — Ne yaptığınızı bilmiyorsanız değiştirmeyin. Eşya listesinin tamamını çıkarmak için Addressables kataloğunun tümünü tarar (yavaştır, açılışta gözle görülür bir takılma yapar). Mod yazarı bu seçeneği, modla birlikte gelen StackCustomizer_items.csv dosyasını oluşturmak için kullanır. Oyunculara önerimiz: false bırakın. Harmony yaması sayesinde eşya bazlı değişiklikler tarama olmadan da çalışır.",
+    DumpItemList: "GELİŞTİRİCİ SEÇENEĞİ — ScanOnStartup açıkken, bulunan tüm eşyaların listesini (14 dilin tümündeki adlarıyla birlikte) BepInEx/plugins/StackCustomizer_items.csv dosyasına da yazar.",
+    Mode: "İstifleme kipi (yalnızca biri seçilebilir). Unified: istiflenebilir her eşya UnifiedMaxStack değerini kullanır. Multiplier: her eşyanın özgün MaxStack değeri Multiplier ile çarpılır ve MultiplierCap ile sınırlandırılır.",
+    UnifiedMaxStack: "Mode = Unified iken kullanılır. İstiflenebilir her eşyanın yığın sınırı bu değere sabitlenir.",
+    Multiplier: "Mode = Multiplier iken kullanılır. Her eşyanın özgün MaxStack değeri bu sayıyla çarpılır.",
+    MultiplierCap: "Mode = Multiplier iken kullanılır. Güvenlik sınırı — çarpım sonucu bu değeri aşamaz.",
+  },
+  "humanhost.storagebox.expand.cfg": {
+    Columns: "Satır başına sütun sayısı (oyunun varsayılanı: 5, en çok 12 — daha geniş yaparsanız çantayı açtığınızda arayüz çanta arayüzünün üzerine taşar).",
+    Rows: "Toplam satır sayısı (oyunun varsayılanı: 6). Varsayılan 10 satır x 10 sütun = 100 göz.",
+    VisibleRows: "Kaydırma çubuğu devreye girmeden önce ekranda görünen satır sayısı (oyunun varsayılanı: 6, en çok 10 — daha uzun yaparsanız ekrana sığmaz).",
+    ScrollbarWidth: "Kaydırma çubuğunun genişliği (piksel cinsinden).",
+    ScrollSensitivity: "Fare tekerleğiyle kaydırma hassasiyeti.",
+  },
+  "humanhost.vehicle.tweaks.cfg": {
+    SolarMultiplier: "Güneş enerjisiyle şarjın hız çarpanı. Oyunda varsayılan hız, hava tam açıkken saniyede yaklaşık 0,05 yakıttır (her 3 saniyede bir 0,15'lik artış); yani 1000 yakıt yaklaşık 5,5 oyun saati sürer ve yalnızca gündüz, tepenizde açık bir gökyüzü varken dolar. x10 ile bu süre yaklaşık 33 dakikaya iner. Toplam hız, araçta henüz dolmamış tüm motorlara eşit olarak paylaştırılır.",
+    BicycleMultiplier: "Pedallı (bisikletli) jeneratörle şarjın hız çarpanı. Oyunda varsayılan hız, normal pedal çevirirken saniyede 0,3 yakıt, hızlı çevirirken 0,6 yakıttır (1000 yakıt = 55 / 28 dakika). x5 ile bu süre yaklaşık 11 / 5,5 dakikaya iner. Toplam hız, araçta henüz dolmamış tüm motorlara eşit olarak paylaştırılır.",
+    EnableRefillHotkey: "Yüklü tüm araç motorlarının yakıtını anında tam dolduran bir kısayol tuşunu etkinleştirir.",
+    RefillHotkey: "Yüklü tüm araç motorlarını tam yakıtla dolduran kısayol tuşu. Değer bir Unity KeyCode adıdır; istenirse ' + ' ile birleştirilen değiştirici tuşlar eklenebilir. Örnekler: End | Home | F5 | KeypadEnter | R + LeftControl | G + LeftAlt. Adlandırma kuralı: harfler A-Z'dir; üst sıradaki rakamlar Alpha1..Alpha0; sayı tuş takımındaki rakamlar Keypad1..Keypad0; değiştirici tuşlar LeftControl/LeftShift/LeftAlt (ya da Right* karşılıkları) olarak yazılır. Oyunun zaten kullandığı tuşlardan (W/A/S/D, Space, Shift, F, H) ve F12'den (Steam ekran görüntüsü) kaçının.",
+    EnableZoomRange: "Bir araçta otururken kameranın tekerlekle ne kadar yakınlaşıp uzaklaşabileceğini kendiniz ayarlamanızı sağlar.",
+    MaxDistance: "Araçta otururken kameranın çıkabileceği en uzak mesafe (oyunun varsayılanı 8). Tekerleği dışarı çevirerek ne kadar uzaklaşabileceğinizi belirler.",
+    MinDistance: "Araçta otururken kameranın yaklaşabileceği en yakın mesafe (oyunun varsayılanı ~0). Tekerleği içeri çevirerek ne kadar yaklaşabileceğinizi belirler.",
+  },
+  "humanhost.backpack.expand.cfg": {
+    BagSlotCount: "Çantadaki toplam göz sayısı. Oyunun varsayılanı 56'dır. 7'nin katları önerilir (56/63/70/.../203/210/...).",
+    ScrollbarWidth: "Kaydırma çubuğunun genişliği (piksel cinsinden).",
+    ScrollSensitivity: "Fare tekerleğiyle kaydırma hassasiyeti.",
+  },
+};
+
+export default d;

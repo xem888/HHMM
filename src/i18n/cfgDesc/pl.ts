@@ -1,0 +1,56 @@
+const d: Record<string, Record<string, string>> = {
+  "humanhost.admin.panel.cfg": {
+    OverrideFov: "Pozwala narzucić własne pole widzenia zamiast tego ustawionego w grze.",
+    Fov: "Pole widzenia kamery podawane w stopniach.",
+    OverrideCamOffset: "Pozwala dowolnie przesunąć kamerę: w bok, w pionie oraz w głąb (prawo/góra/tył).",
+    CamOffsetRight: "Przesunięcie w bok w metrach: wartość dodatnia odsuwa kamerę w prawo, ujemna w lewo.",
+    CamOffsetUp: "Przesunięcie w pionie w metrach: wartość dodatnia unosi kamerę w górę, ujemna opuszcza ją w dół.",
+    CamOffsetBack: "Przesunięcie wzdłuż kierunku patrzenia postaci, w metrach: wartość dodatnia wysuwa kamerę do przodu, ujemna cofa ją do tyłu.",
+    Debuffs: "Identyfikatory negatywnych efektów, na które chcesz być odporny, rozdzielone przecinkami.",
+    SavedPoints: "Zapisane punkty teleportacji, po jednym w wierszu, w formacie nazwa|x|y|z.",
+    X: "Pozioma pozycja lewego górnego rogu panelu.",
+    Y: "Pionowa pozycja lewego górnego rogu panelu.",
+    Width: "Szerokość panelu.",
+    Height: "Wysokość panelu.",
+  },
+  "humanhost.quickloot.cfg": {
+    EnableDebug: "Nie zmieniaj. Opcja służy wyłącznie autorowi moda do wyłapywania błędów.",
+    Hotkey: "Klawisz, którym zgarniasz cały łup w pobliżu. Obsługuje kombinacje, np. „X” lub „LeftControl + X”.",
+    Radius: "Zasięg zbierania wokół postaci, podany w metrach.",
+    GroundItems: "Podnosi przedmioty leżące na ziemi.",
+    GroundResources: "Zbiera surowce z ziemi, które zwykle trzeba namierzyć celownikiem.",
+    WorldContainers: "Automatycznie opróżnia pojemniki rozstawione w świecie. Skrzynie postawione przez ciebie pozostają nietknięte.",
+    ZombieCorpses: "Automatycznie przeszukuje zwłoki ubitych zombie.",
+  },
+  "humanhost.stack.customizer.cfg": {
+    ScanOnStartup: "OPCJA DLA DEWELOPERÓW — NIE ZMIENIAJ, jeśli nie wiesz dokładnie, co robisz. Przeszukuje cały katalog Addressables, aby zrzucić pełną listę przedmiotów (wolne, wyraźnie odczuwalne zacięcie przy starcie gry). Autor moda używa jej do wygenerowania pliku StackCustomizer_items.csv dołączonego do moda. Gracze: zostawcie wartość false. Dzięki łatce Harmony nadpisania poszczególnych przedmiotów działają bez żadnego skanowania.",
+    DumpItemList: "OPCJA DLA DEWELOPERÓW — gdy ScanOnStartup jest włączone, zapisuje dodatkowo pełną wykrytą listę przedmiotów (wraz z nazwami we wszystkich 14 językach) do pliku BepInEx/plugins/StackCustomizer_items.csv.",
+    Mode: "Tryb stosów (wykluczają się wzajemnie). Unified — każdy przedmiot, który da się układać w stosy, otrzymuje wartość UnifiedMaxStack. Multiplier — pierwotny MaxStack każdego przedmiotu zostaje pomnożony przez Multiplier, lecz nie więcej niż do wartości MultiplierCap.",
+    UnifiedMaxStack: "Stosowane przy Mode = Unified. Każdy przedmiot układany w stosy zostaje wymuszony do tej wielkości stosu.",
+    Multiplier: "Stosowane przy Mode = Multiplier. Pierwotny MaxStack każdego przedmiotu zostaje pomnożony przez tę wartość.",
+    MultiplierCap: "Stosowane przy Mode = Multiplier. Górny limit bezpieczeństwa — pomnożony wynik nie może go przekroczyć.",
+  },
+  "humanhost.storagebox.expand.cfg": {
+    Columns: "Liczba kolumn w rzędzie (oryginalnie 5, maksymalnie 12 — szersza siatka nachodzi na interfejs plecaka, gdy go otworzysz).",
+    Rows: "Łączna liczba rzędów (oryginalnie 6). Domyślnie 10 rzędów × 10 kolumn, czyli 100 miejsc.",
+    VisibleRows: "Liczba rzędów widocznych, zanim włączy się przewijanie (oryginalnie 6, maksymalnie 10 — wyższa siatka wychodzi poza ekran).",
+    ScrollbarWidth: "Szerokość paska przewijania w pikselach.",
+    ScrollSensitivity: "Czułość przewijania kółkiem myszy.",
+  },
+  "humanhost.vehicle.tweaks.cfg": {
+    SolarMultiplier: "Mnożnik szybkości ładowania generatora słonecznego. Oryginalnie to około 0,05 paliwa/s przy idealnej pogodzie (jeden skok o 0,15 co 3 sekundy), więc naładowanie 1000 paliwa zajmuje około 5,5 godziny gry i odbywa się wyłącznie w dzień, pod czystym niebem. Przy x10 to mniej więcej 33 minuty. Łączna szybkość ładowania rozkłada się równo na wszystkie jeszcze niepełne silniki pojazdu.",
+    BicycleMultiplier: "Mnożnik szybkości ładowania generatora pedałowego (rowerowego). Oryginalnie to 0,3 paliwa/s przy spokojnym pedałowaniu i 0,6 paliwa/s na sprincie (1000 paliwa = 55 / 28 minut). Przy x5 to mniej więcej 11 / 5,5 minuty. Łączna szybkość ładowania rozkłada się równo na wszystkie jeszcze niepełne silniki pojazdu.",
+    EnableRefillHotkey: "Włącza skrót klawiszowy, który błyskawicznie napełnia do pełna każdy wczytany silnik pojazdu.",
+    RefillHotkey: "Klawisz, którym napełniasz do pełna wszystkie wczytane silniki pojazdów. Wartość to nazwa Unity KeyCode, opcjonalnie z modyfikatorami łączonymi przez „ + ”. Przykłady: End | Home | F5 | KeypadEnter | R + LeftControl | G + LeftAlt. Zasady nazewnictwa: litery to A–Z; cyfry z górnego rzędu to Alpha1..Alpha0; cyfry z klawiatury numerycznej to Keypad1..Keypad0; modyfikatory to LeftControl/LeftShift/LeftAlt (lub odpowiedniki Right*). Unikaj klawiszy, których gra już używa (W/A/S/D, Space, Shift, F, H), oraz F12 (zrzut ekranu Steam).",
+    EnableZoomRange: "Pozwala dostosować, jak daleko kamera może oddalać i przybliżać widok kółkiem, gdy siedzisz w pojeździe.",
+    MaxDistance: "Maksymalna odległość kamery w pozycji siedzącej (oryginalnie 8). Określa, jak daleko możesz oddalić widok kółkiem.",
+    MinDistance: "Minimalna odległość kamery w pozycji siedzącej (oryginalnie około 0). Określa, jak blisko możesz przybliżyć widok kółkiem.",
+  },
+  "humanhost.backpack.expand.cfg": {
+    BagSlotCount: "Łączna liczba miejsc w plecaku. Oryginalnie jest ich 56. Zaleca się wielokrotności 7 (56/63/70/.../203/210/...).",
+    ScrollbarWidth: "Szerokość paska przewijania w pikselach.",
+    ScrollSensitivity: "Czułość przewijania kółkiem myszy.",
+  },
+};
+
+export default d;

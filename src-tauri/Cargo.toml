@@ -1,0 +1,43 @@
+[package]
+name = "hhmm"
+version = "1.2.0"
+description = "Human Host Mod Manager"
+authors = ["xem888"]
+edition = "2021"
+
+[lib]
+name = "hhmm_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["tray-icon"] }
+tauri-plugin-opener = "2"
+tauri-plugin-dialog = "2"
+tauri-plugin-single-instance = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+winreg = "0.52"
+sysinfo = "0.33"
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "stream"] }
+futures-util = "0.3"
+zip = "2"
+sha2 = "0.10"
+pelite = "0.10"
+dirs = "5"
+tauri-plugin-updater = "2.10.1"
+tauri-plugin-window-state = "2"
+tauri-plugin-log = "2"
+log = "0.4"
+
+[dev-dependencies]
+tempfile = "3"
+
+[profile.release]
+lto = true
+codegen-units = 1
+opt-level = "s"
+strip = true
