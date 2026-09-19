@@ -3,6 +3,35 @@
 All notable changes to HHMM are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); versions follow [SemVer](https://semver.org/).
 
+## [1.3.0] - 2026-09-19
+
+### Added
+- **Mods with sub-folders and multiple dlls are now fully supported.** A Workshop mod is installed as its whole file tree — models, textures, sounds and helper dlls in sub-folders included — at exactly the same paths the in-game Mod Browser uses, so both tools always agree on what is installed. Previously only the top-level files were copied, which left asset-heavy mods half installed
+  - Mods that were half installed by an older HHMM show up as **Update available**; one click completes them
+  - Disabling or uninstalling moves/removes the whole tree and cleans up emptied folders — nothing is left behind in `plugins`
+  - Mods you placed manually in their own sub-folder (`plugins/SomeMod/…`) now appear in the list and are managed as one unit
+  - Files shared by two installed mods are kept until the last of them is removed; a same-named file with different content is refused with a clear message instead of being silently overwritten
+- Zip install keeps the archive's folder structure (it used to flatten everything and refused archives containing the same file name in different folders); a wrapping folder or a `BepInEx/plugins/` prefix inside the zip is detected automatically
+- **Update detection looks at the whole mod, not just the dll**: an author updating only a texture or a translation file is now noticed — while files you (or the mod) changed after installing are never treated as an update and are not overwritten when the author did not touch them
+- Setting **display names**: mods can ship translated setting names (`labels`) next to the descriptions in their `.hhmm-i18n.json`; the config editor shows them and keeps the raw key as a tooltip. Existing translation files keep working unchanged
+- Uninstalling asks for confirmation; manually installed mods get a stronger warning because HHMM has no copy to reinstall from
+
+### Fixed
+- **The window no longer freezes while mods are being scanned, installed or toggled** — with many or large mods (or a slow disk) the first load could take long enough for Windows to mark the window "Not Responding"; this work now runs in the background
+- **Drag & drop install works on every page** — it only reacted on the My Mods page before
+- Applying a profile no longer deletes manually installed mods that are not part of it — they are disabled instead (they could not be restored, not even from the automatic backup)
+- Quitting from the tray menu now asks about unsaved config changes, like closing the window does
+- "Open config" could jump to another mod's config when one mod name contained the other (`Stack` vs `StackCustomizer`)
+- Config files saved with a UTF-8 BOM: changes to settings in the first section were reported as saved but never written
+- Launching the game waits for a running install/profile operation to finish instead of starting on a half-written mod folder
+- The BepInEx deploy button could stay in its loading state forever if the progress subscription failed
+- Moving a file across drives could delete a pre-existing target when the rollback ran; copies are now written to a temporary name first, so an interrupted copy never leaves a truncated dll
+
+### Changed
+- First mod-list load is about 40% faster (hashing)
+- Drag & drop / browse installs are written to the log (file name, result or the reason for a refusal), so "I dropped it and nothing happened" reports can be diagnosed
+- Translation files with only other tools' blocks (e.g. Mod Menu's) are skipped quietly instead of logging a "bad format" warning
+
 ## [1.2.0] - 2026-07-04
 
 ### Added

@@ -16,7 +16,7 @@ use error::{AppError, AppResult};
 use state::AppState;
 use tauri::menu::{Menu, MenuItem};
 use tauri::tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent};
-use tauri::Manager;
+use tauri::{Emitter, Manager};
 
 fn show_main_window(app: &tauri::AppHandle) {
     if let Some(w) = app.get_webview_window("main") {
@@ -135,7 +135,9 @@ pub fn run() {
                 .show_menu_on_left_click(false)
                 .on_menu_event(|app, event| match event.id.as_ref() {
                     "show" => show_main_window(app),
-                    "quit" => app.exit(0),
+                    "quit" => {
+                        let _ = app.emit("app://quit-requested", ());
+                    }
                     _ => {}
                 })
                 .on_tray_icon_event(|tray, event| {

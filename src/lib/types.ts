@@ -16,6 +16,7 @@ export interface BepInExStatus {
 export interface ModEntry {
   id: string;
   dllName: string;
+  dllRel: string;
   enabled: boolean;
   version: string | null;
   hash: string;
@@ -28,6 +29,7 @@ export interface ModEntry {
 export interface WorkshopItem {
   itemId: string;
   dllName: string;
+  dllRel: string;
   version: string | null;
   hash: string;
   mtime: number;

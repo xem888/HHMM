@@ -43,4 +43,5 @@ export const CMD = {
 
 export const EVT = {
   bepinexDeployProgress: "bepinex://deploy-progress",
+  quitRequested: "app://quit-requested",
 } as const;

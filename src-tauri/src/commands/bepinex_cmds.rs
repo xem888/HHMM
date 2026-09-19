@@ -3,7 +3,7 @@ use crate::error::{AppError, AppResult};
 use crate::state::AppState;
 use tauri::{AppHandle, State};
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn detect_bepinex(state: State<AppState>) -> AppResult<BepInExStatus> {
     let gp = state.game_paths()?;
     Ok(bepinex::detect::detect(&gp))
@@ -22,7 +22,7 @@ pub async fn deploy_bepinex(state: State<'_, AppState>, app: AppHandle) -> AppRe
         .inspect_err(|e| log::warn!("deploy_bepinex failed: {}", e))
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn fix_hide_manager(state: State<AppState>) -> AppResult<bool> {
     let gp = state.game_paths()?;
     let _op = crate::fsx::op_lock();

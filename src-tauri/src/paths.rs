@@ -38,6 +38,9 @@ impl GamePaths {
     pub fn config(&self) -> PathBuf {
         self.bepinex().join("config")
     }
+    pub fn manifest(&self) -> PathBuf {
+        self.bepinex().join("HHMM").join("manifest.json")
+    }
 }
 
 pub fn normalize(p: &Path) -> PathBuf {

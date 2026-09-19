@@ -4,7 +4,7 @@ use crate::paths::resolve_within;
 use crate::state::AppState;
 use tauri::{AppHandle, State};
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn list_cfg_files(state: State<AppState>) -> AppResult<Vec<CfgFileMeta>> {
     let gp = state.game_paths()?;
     let dir = gp.config();
@@ -27,14 +27,14 @@ pub fn list_cfg_files(state: State<AppState>) -> AppResult<Vec<CfgFileMeta>> {
     Ok(out)
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn read_cfg(state: State<AppState>, file_name: String) -> AppResult<CfgFile> {
     let gp = state.game_paths()?;
     let path = resolve_within(&gp.config(), &[&file_name])?;
     cfg::read_file(&path)
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn write_cfg_values(
     state: State<AppState>,
     file_name: String,
@@ -49,7 +49,7 @@ pub fn write_cfg_values(
     cfg::writer::write_values(&path, &changes)
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn read_mod_cfg_i18n(state: State<AppState>) -> AppResult<cfg::mod_i18n::ModCfgI18n> {
     let gp = state.game_paths()?;
     Ok(cfg::mod_i18n::scan(&gp))

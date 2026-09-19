@@ -352,9 +352,8 @@ export default function Dashboard() {
       const msg = errMsg(e);
       toast.error(t("deploy.failed"), { id, description: msg });
     } finally {
-      const unlisten = await unlistenPromise;
-      unlisten();
       setDeploying(false);
+      void unlistenPromise.then((f) => f()).catch(() => {});
     }
   }
 

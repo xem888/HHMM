@@ -29,6 +29,8 @@ pub struct Profile {
     pub cfgs: BTreeMap<String, String>,
     #[serde(default)]
     pub mods: Vec<ProfileMod>,
+    #[serde(default)]
+    pub format: u32,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -39,6 +41,8 @@ pub struct ProfileMeta {
     pub mod_count: usize,
     pub enabled_count: usize,
 }
+
+pub const PROFILE_FORMAT: u32 = 2;
 
 pub const BACKUP_ID: &str = "~backup";
 pub const BACKUP_NAME: &str = "__backup__";
@@ -119,6 +123,7 @@ mod tests {
         let legacy = r#"{"id":"p1","name":"P1","cfgs":{"a.cfg":"[X]\nk = 1\n"}}"#;
         let p: Profile = serde_json::from_str(legacy).unwrap();
         assert!(p.mods.is_empty(), "legacy profile mods should degrade to empty");
+        assert_eq!(p.format, 0);
         assert_eq!(p.cfgs.len(), 1);
     }
 
@@ -134,6 +139,7 @@ mod tests {
                 item_id: Some("123".into()),
                 enabled: true,
             }],
+            format: PROFILE_FORMAT,
         };
         let json = serde_json::to_string(&p).unwrap();
         assert!(json.contains("\"dllName\""), "should serialize as camelCase: {}", json);
@@ -142,5 +148,6 @@ mod tests {
         assert_eq!(back.mods.len(), 1);
         assert_eq!(back.mods[0].dll_name, "M.dll");
         assert_eq!(back.mods[0].item_id.as_deref(), Some("123"));
+        assert_eq!(back.format, PROFILE_FORMAT);
     }
 }

@@ -1,12 +1,13 @@
-use super::ModEntry;
+use super::{tree, ModEntry};
 use crate::fsx;
 use crate::paths::GamePaths;
-use std::path::{Path, PathBuf};
+use std::collections::HashSet;
+use std::path::Path;
 
-pub fn scan_installed(gp: &GamePaths) -> Vec<ModEntry> {
+pub fn scan_installed_with(gp: &GamePaths, ctx: &tree::Ctx) -> Vec<ModEntry> {
     let mut out = Vec::new();
-    scan_dir(&gp.plugins(), true, &mut out);
-    scan_dir(&gp.disabled(), false, &mut out);
+    scan_side(&gp.plugins(), true, ctx, &mut out);
+    scan_side(&gp.disabled(), false, ctx, &mut out);
     out
 }
 
@@ -39,43 +40,68 @@ fn migrate_legacy_disabled(gp: &GamePaths) {
     let _ = std::fs::remove_dir(&legacy);
 }
 
-fn scan_dir(dir: &Path, enabled: bool, out: &mut Vec<ModEntry>) {
-    let Ok(rd) = std::fs::read_dir(dir) else {
-        return;
-    };
-    let files: Vec<PathBuf> = rd
-        .flatten()
-        .map(|e| e.path())
-        .filter(|p| p.is_file())
-        .collect();
+fn scan_side(root: &Path, enabled: bool, ctx: &tree::Ctx, out: &mut Vec<ModEntry>) {
+    let files = tree::walk_files(root);
+    let present: HashSet<String> = files.iter().map(|f| f.to_lowercase()).collect();
 
-    let names: Vec<String> = files
+    let mut secondary: HashSet<String> = HashSet::new();
+    for e in ctx.manifest.mods.values() {
+        if present.contains(&e.dll_rel.to_lowercase()) {
+            secondary.extend(
+                e.files
+                    .keys()
+                    .filter(|f| tree::is_dll_rel(f) && !f.eq_ignore_ascii_case(&e.dll_rel))
+                    .map(|f| f.to_lowercase()),
+            );
+        }
+    }
+    for w in &ctx.ws {
+        if present.contains(&w.dll_rel.to_lowercase()) {
+            secondary.extend(
+                w.extra_files
+                    .iter()
+                    .filter(|f| tree::is_dll_rel(f))
+                    .map(|f| f.to_lowercase()),
+            );
+        }
+    }
+
+    let mut seen: HashSet<String> = HashSet::new();
+    let mut dlls: Vec<&String> = files
         .iter()
-        .filter_map(|p| p.file_name().map(|s| s.to_string_lossy().to_string()))
+        .filter(|f| tree::is_dll_rel(f) && !secondary.contains(&f.to_lowercase()))
         .collect();
-    let stems = super::dll_stems_of(&names);
+    dlls.sort_by_key(|f| (f.matches('/').count(), f.to_lowercase()));
 
-    for p in &files {
-        if !super::is_dll_path(p) {
+    for dll_rel in dlls {
+        let dll_name = tree::rel_file_name(dll_rel).to_string();
+        if !seen.insert(dll_name.to_lowercase()) {
+            log::warn!(
+                "dll '{}' exists at more than one path under {}; managing the shallowest copy only",
+                dll_name,
+                root.display()
+            );
             continue;
         }
-        let dll_name = p.file_name().unwrap().to_string_lossy().to_string();
+        let Ok(p) = tree::rel_join(root, dll_rel) else {
+            continue;
+        };
         let id = p.file_stem().unwrap().to_string_lossy().to_string();
-
-        let extra_files: Vec<String> = names
-            .iter()
-            .filter(|n| super::is_extra_file_of(n, &id, &dll_name, &stems))
-            .cloned()
+        let extra_files: Vec<String> = ctx
+            .owned(&files, dll_rel)
+            .into_iter()
+            .filter(|f| f != dll_rel)
             .collect();
 
         out.push(ModEntry {
             id,
             dll_name,
+            dll_rel: dll_rel.clone(),
             enabled,
             version: None,
-            hash: fsx::sha256_file_cached(p).unwrap_or_default(),
-            mtime: fsx::mtime(p).unwrap_or(0),
-            size: fsx::file_size(p).unwrap_or(0),
+            hash: fsx::sha256_file_cached(&p).unwrap_or_default(),
+            mtime: fsx::mtime(&p).unwrap_or(0),
+            size: fsx::file_size(&p).unwrap_or(0),
             extra_files,
             workshop_item_id: None,
         });

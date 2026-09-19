@@ -102,6 +102,7 @@ fn create_with_id(gp: &GamePaths, id: &str, name: &str, overwrite: bool) -> AppR
         name: name.to_string(),
         cfgs,
         mods: profile_mods,
+        format: super::PROFILE_FORMAT,
     };
 
     let dir = profiles_dir();

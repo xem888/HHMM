@@ -61,6 +61,12 @@ const mods = {
     uninstall: "アンインストール",
   },
 
+  uninstallConfirm: {
+    title: "{{name}} をアンインストールしますか？",
+    workshop: "ファイルはゲームから削除されます。サブスクライブは維持されるので、いつでも再インストールできます。",
+    local: "この Mod は手動でインストールされたもので、HHMM にコピーはありません。ファイルは完全に削除され、元に戻せません。",
+  },
+
   empty: {
     none: {
       title: "mod がありません",

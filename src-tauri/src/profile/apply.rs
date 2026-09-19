@@ -9,6 +9,7 @@ pub(crate) struct CurrentMod {
     pub id: String,
     pub dll_name: String,
     pub installed: bool,
+    pub local: bool,
 }
 
 #[derive(Debug, PartialEq, Eq)]
@@ -24,9 +25,17 @@ pub(crate) fn plan_mod_actions(current: &[CurrentMod], target: &[ProfileMod]) ->
 
     for c in current {
         if c.installed && !target_dlls.contains(&c.dll_name.to_lowercase()) {
-            plan.push(PlanAction::Uninstall {
-                id: c.id.clone(),
-                dll_name: c.dll_name.clone(),
+            plan.push(if c.local {
+                PlanAction::Toggle {
+                    id: c.id.clone(),
+                    dll_name: c.dll_name.clone(),
+                    enable: false,
+                }
+            } else {
+                PlanAction::Uninstall {
+                    id: c.id.clone(),
+                    dll_name: c.dll_name.clone(),
+                }
             });
         }
     }
@@ -70,7 +79,7 @@ pub fn apply(gp: &GamePaths, profile: &Profile) -> AppResult<ApplyResult> {
         }
     }
 
-    if profile.mods.is_empty() {
+    if profile.mods.is_empty() && profile.format < 2 {
         return Ok(res);
     }
 
@@ -78,6 +87,7 @@ pub fn apply(gp: &GamePaths, profile: &Profile) -> AppResult<ApplyResult> {
         .into_iter()
         .map(|m| CurrentMod {
             installed: m.state != ManagedState::NotInstalled,
+            local: matches!(m.source, mods::ManagedSource::Local),
             id: m.id,
             dll_name: m.dll_name,
         })
@@ -111,7 +121,7 @@ mod tests {
     use super::*;
 
     fn cur(id: &str, dll: &str, installed: bool) -> CurrentMod {
-        CurrentMod { id: id.into(), dll_name: dll.into(), installed }
+        CurrentMod { id: id.into(), dll_name: dll.into(), installed, local: false }
     }
     fn tgt(id: &str, dll: &str, item_id: Option<&str>, enabled: bool) -> ProfileMod {
         ProfileMod {
@@ -130,6 +140,17 @@ mod tests {
         );
         assert!(plan.contains(&PlanAction::Uninstall { id: "b".into(), dll_name: "B.dll".into() }));
         assert!(!plan.iter().any(|p| matches!(p, PlanAction::Uninstall { id, .. } if id == "a")));
+    }
+
+    #[test]
+    fn local_mod_outside_profile_is_disabled_never_deleted() {
+        let mut c = cur("mine", "Mine.dll", true);
+        c.local = true;
+        let plan = plan_mod_actions(&[c], &[]);
+        assert_eq!(
+            plan,
+            vec![PlanAction::Toggle { id: "mine".into(), dll_name: "Mine.dll".into(), enable: false }]
+        );
     }
 
     #[test]
@@ -193,5 +214,37 @@ mod tests {
         );
         assert!(matches!(plan[0], PlanAction::Uninstall { .. }));
         assert!(matches!(plan[1], PlanAction::Install { .. }));
+    }
+
+    fn temp_gp_with_local_mod() -> (tempfile::TempDir, GamePaths) {
+        let tmp = tempfile::tempdir().unwrap();
+        let gp = GamePaths::new(tmp.path().join("steamapps").join("common").join("Human Host"));
+        std::fs::create_dir_all(gp.plugins()).unwrap();
+        std::fs::create_dir_all(gp.disabled()).unwrap();
+        std::fs::write(gp.plugins().join("Mine.dll"), b"x").unwrap();
+        (tmp, gp)
+    }
+
+    #[test]
+    fn old_profile_with_empty_mods_only_restores_cfg() {
+        let (_t, gp) = temp_gp_with_local_mod();
+        for legacy in [
+            r#"{"id":"p","name":"P","cfgs":{}}"#,
+            r#"{"id":"p","name":"P","cfgs":{},"mods":[]}"#,
+        ] {
+            let p: Profile = serde_json::from_str(legacy).unwrap();
+            apply(&gp, &p).unwrap();
+            assert!(gp.plugins().join("Mine.dll").is_file(), "a legacy profile must not touch mods");
+        }
+    }
+
+    #[test]
+    fn new_empty_profile_clears_the_environment_without_deleting_local_mods() {
+        let (_t, gp) = temp_gp_with_local_mod();
+        let p: Profile =
+            serde_json::from_str(r#"{"id":"p","name":"P","cfgs":{},"mods":[],"format":2}"#).unwrap();
+        apply(&gp, &p).unwrap();
+        assert!(!gp.plugins().join("Mine.dll").exists());
+        assert!(gp.disabled().join("Mine.dll").is_file(), "a manually installed mod may only be disabled, never deleted");
     }
 }

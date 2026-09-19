@@ -61,6 +61,12 @@ const mods = {
     uninstall: "卸载",
   },
 
+  uninstallConfirm: {
+    title: "卸载 {{name}}？",
+    workshop: "它的文件会从游戏中移除。订阅仍然保留，随时可以重新安装。",
+    local: "这个 mod 是手动安装的，HHMM 没有它的副本。文件将被永久删除，无法恢复。",
+  },
+
   empty: {
     none: {
       title: "还没有 Mod",

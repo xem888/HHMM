@@ -61,6 +61,12 @@ const mods = {
     uninstall: "Kaldır",
   },
 
+  uninstallConfirm: {
+    title: "{{name}} kaldırılsın mı?",
+    workshop: "Dosyaları oyundan kaldırılacak. Aboneliğin devam eder, istediğin zaman yeniden yükleyebilirsin.",
+    local: "Bu mod elle yüklendi, bu yüzden HHMM’de bir kopyası yok. Dosyaları kalıcı olarak silinecek ve geri getirilemeyecek.",
+  },
+
   empty: {
     none: {
       title: "Henüz mod yok",

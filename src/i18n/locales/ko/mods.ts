@@ -61,6 +61,12 @@ const mods = {
     uninstall: "제거",
   },
 
+  uninstallConfirm: {
+    title: "{{name}}을(를) 제거할까요?",
+    workshop: "파일이 게임에서 제거됩니다. 구독은 유지되므로 언제든지 다시 설치할 수 있습니다.",
+    local: "이 모드는 수동으로 설치되어 HHMM에 사본이 없습니다. 파일이 영구적으로 삭제되며 복구할 수 없습니다.",
+  },
+
   empty: {
     none: {
       title: "설치된 Mod가 없습니다",

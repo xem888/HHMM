@@ -3,7 +3,7 @@ use crate::mods::{self, ManagedMod, SyncAction, SyncResult};
 use crate::state::AppState;
 use tauri::State;
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn list_managed_mods(state: State<AppState>) -> AppResult<Vec<ManagedMod>> {
     let gp = state.game_paths()?;
     Ok(mods::managed::list_managed(&gp))
@@ -19,7 +19,7 @@ pub async fn refresh_workshop_meta(
     Ok(mods::managed::list_managed(&gp))
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn install_one(state: State<AppState>, item_id: String, to_disabled: bool) -> AppResult<()> {
     let gp = state.game_paths()?;
     let _op = crate::fsx::op_lock();
@@ -31,7 +31,7 @@ pub fn install_one(state: State<AppState>, item_id: String, to_disabled: bool) -
         .inspect_err(|e| log::warn!("install_one failed item={}: {}", item_id, e))
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn uninstall_one(state: State<AppState>, mod_id: String) -> AppResult<()> {
     let gp = state.game_paths()?;
     let _op = crate::fsx::op_lock();
@@ -43,15 +43,17 @@ pub fn uninstall_one(state: State<AppState>, mod_id: String) -> AppResult<()> {
         .inspect_err(|e| log::warn!("uninstall_one failed mod={}: {}", mod_id, e))
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn compute_sync_plan(state: State<AppState>) -> AppResult<Vec<SyncAction>> {
     let gp = state.game_paths()?;
-    let installed = mods::scan::scan_installed(&gp);
-    let workshop = mods::workshop::scan_workshop(&gp);
-    Ok(mods::sync::compute_plan(&installed, &workshop))
+    let ctx = mods::tree::Ctx::load(&gp);
+    let installed = mods::scan::scan_installed_with(&gp, &ctx);
+    Ok(mods::sync::compute_plan(&installed, &ctx.ws, |w, m| {
+        mods::sync::is_updatable(&gp, &ctx, w, m)
+    }))
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn apply_sync(state: State<AppState>, actions: Vec<SyncAction>) -> AppResult<SyncResult> {
     let gp = state.game_paths()?;
     let _op = crate::fsx::op_lock();
@@ -66,7 +68,7 @@ pub fn apply_sync(state: State<AppState>, actions: Vec<SyncAction>) -> AppResult
     Ok(r)
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn toggle_mod(state: State<AppState>, mod_id: String, enable: bool) -> AppResult<()> {
     let gp = state.game_paths()?;
     let _op = crate::fsx::op_lock();

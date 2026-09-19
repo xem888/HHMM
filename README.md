@@ -20,16 +20,16 @@ No more digging through folders or hand-editing config files. HHMM does the bori
 
 ## Features
 
-- **One-click sync** — pull all your subscribed Workshop mods straight into the game's plugins folder
-- **Enable / disable per mod** — turn any mod on or off individually, no file juggling
+- **Install & update from your subscriptions** — per mod or all at once, as the mod's whole file tree (sub-folders, assets and extra dlls included), at exactly the same paths the game's own in-game Mod Browser uses, so the two tools always agree on what is installed
+- **Enable / disable per mod** — turn any mod on or off individually, no file juggling; the whole mod moves, nothing is left behind in `plugins`
 - **Visual config editor** — tweak every mod's settings with real controls (sliders, toggles, key-capture), no manual text editing; built-in safety so you can't break the file format
 - **Open raw config** — advanced users can still open the original `.cfg` in one click
 - **One-click BepInEx** — install / deploy the mod framework automatically (download integrity verified via SHA-256), with the game's required `HideManagerGameObject` setting enabled out of the box
 - **Required-setting guard** — if that setting is ever off (hand-installed BepInEx, old profiles, manual edits), the dashboard warns you and fixes it in one click — no more "mods installed but nothing happens in game"
 - **Config profiles** — snapshot your entire mod setup (which mods are on + all their settings) and switch between setups with one click
-- **Drag & drop install** — drop a local `.dll` or `.zip` anywhere in the window to install it
+- **Drag & drop install** — drop a local `.dll` or `.zip` anywhere in the window to install it; zips keep their folder structure
 - **Workshop titles & authors** — shows real mod names and authors, not cryptic file names
-- **Mod-shipped config translations** — mod authors can bundle a `<DllName>.hhmm-i18n.json` next to their dll to ship translated setting descriptions with the mod itself; HHMM also carries built-in translations for popular mods
+- **Mod-shipped config translations** — mod authors can bundle a `<DllName>.hhmm-i18n.json` next to their dll to ship translated setting names and descriptions with the mod itself; HHMM also carries built-in translations for popular mods
 - **14 languages**, light / dark theme, system tray support, automatic self-update
 
 ## Screenshots
@@ -86,6 +86,8 @@ npx tsc --noEmit             # TypeScript type check
 npm run check:i18n           # i18n key completeness (14 languages × 7 namespaces)
 cd src-tauri && cargo test   # Rust unit tests
 ```
+
+> **Release tags:** the source was published on 2026-07-04, after v1.0.0 - v1.2.0 had already been released, so those three tags do not point at the code they were built from. From v1.3.0 on, every release tag points at the exact source of that build.
 
 ## Architecture
 

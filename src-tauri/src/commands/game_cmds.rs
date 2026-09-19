@@ -6,7 +6,7 @@ use crate::steam::{self, GameInfo};
 use std::path::PathBuf;
 use tauri::State;
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn detect_game(state: State<AppState>) -> AppResult<GameInfo> {
     match steam::detect_game() {
         Ok((gp, library)) => {
@@ -45,7 +45,7 @@ pub fn detect_game(state: State<AppState>) -> AppResult<GameInfo> {
     }
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn set_game_path_manual(state: State<AppState>, root: String) -> AppResult<GameInfo> {
     let gp = GamePaths::new(PathBuf::from(&root));
     if !gp.exe().exists() {
@@ -65,13 +65,14 @@ pub fn set_game_path_manual(state: State<AppState>, root: String) -> AppResult<G
     Ok(info)
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn is_game_running() -> bool {
     game::process::is_game_running()
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn launch_game() -> AppResult<()> {
+    let _op = crate::fsx::op_lock();
     use std::os::windows::process::CommandExt;
     const CREATE_NO_WINDOW: u32 = 0x0800_0000;
     std::process::Command::new("cmd")

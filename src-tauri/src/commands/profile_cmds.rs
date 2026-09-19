@@ -8,14 +8,14 @@ pub fn list_profiles() -> AppResult<Vec<ProfileMeta>> {
     Ok(profile::snapshot::list())
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn create_profile(state: State<AppState>, name: String) -> AppResult<ProfileMeta> {
     let gp = state.game_paths()?;
     let _op = crate::fsx::op_lock();
     profile::snapshot::create(&gp, &name, false)
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn apply_profile(state: State<AppState>, id: String) -> AppResult<ApplyResult> {
     let gp = state.game_paths()?;
     let _op = crate::fsx::op_lock();

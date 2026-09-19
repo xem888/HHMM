@@ -1,13 +1,11 @@
 import {
   useCallback,
-  useEffect,
   useMemo,
   useState,
   type MouseEvent as ReactMouseEvent,
 } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { getCurrentWebview } from "@tauri-apps/api/webview";
 import { open } from "@tauri-apps/plugin-dialog";
 import { motion, useReducedMotion } from "framer-motion";
 import { toast } from "sonner";
@@ -48,9 +46,10 @@ import {
 import { PageHeader } from "@/components/layout/PageHeader";
 import { EmptyState } from "@/components/layout/EmptyState";
 import { cn, errMsg } from "@/lib/utils";
-import { call, CMD } from "@/lib/ipc";
 import { listContainer, listItem } from "@/lib/motion";
 import { useGameStore } from "@/store/useGameStore";
+import { useInstallPaths } from "@/lib/use-install-paths";
+import { confirm } from "@/store/useConfirm";
 import type { ManagedMod } from "@/lib/types";
 
 type Filter = "all" | "notInstalled" | "enabled" | "updatable";
@@ -78,7 +77,6 @@ export default function MyMods() {
   const [q, setQ] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
   const [sortBy, setSortBy] = useState<SortKey>("name");
-  const [dragOver, setDragOver] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [busyKey, setBusyKey] = useState<string | null>(null);
 
@@ -107,57 +105,7 @@ export default function MyMods() {
     [i18n.language],
   );
 
-  const installPaths = useCallback(
-    async (paths: string[]) => {
-      for (const p of paths) {
-        const name = p.split(/[\\/]/).pop() ?? p;
-        const tid = toast.loading(t("toast.installing"));
-        try {
-          const dlls = await call<string[]>(CMD.installFromPath, { path: p });
-          toast.success(
-            t("toast.installed", { name: dlls.length > 0 ? dlls.join(", ") : name }),
-            { id: tid },
-          );
-        } catch (err) {
-          const msg = errMsg(err);
-          toast.error(t("toast.installFailed", { name }), {
-            id: tid,
-            description: msg,
-          });
-        }
-      }
-      try {
-        await refreshMods();
-      } catch (err) {
-        console.warn("refresh after install failed:", err);
-      }
-    },
-    [refreshMods, t],
-  );
-
-  useEffect(() => {
-    let unlisten: (() => void) | undefined;
-    let disposed = false;
-    void getCurrentWebview()
-      .onDragDropEvent(async (e) => {
-        if (e.payload.type === "over" || e.payload.type === "enter") {
-          setDragOver(true);
-        } else if (e.payload.type === "leave") {
-          setDragOver(false);
-        } else if (e.payload.type === "drop") {
-          setDragOver(false);
-          await installPaths(e.payload.paths);
-        }
-      })
-      .then((u) => {
-        if (disposed) u();
-        else unlisten = u;
-      });
-    return () => {
-      disposed = true;
-      unlisten?.();
-    };
-  }, [installPaths]);
+  const installPaths = useInstallPaths();
 
   const browse = useCallback(async () => {
     try {
@@ -240,6 +188,14 @@ export default function MyMods() {
 
   const onUninstall = useCallback(
     async (m: ManagedMod) => {
+      const local = m.source.kind === "local";
+      const go = await confirm({
+        title: t("uninstallConfirm.title", { name: m.displayName }),
+        description: t(local ? "uninstallConfirm.local" : "uninstallConfirm.workshop"),
+        confirmText: t("action.uninstall"),
+        kind: local ? "danger" : "warning",
+      });
+      if (!go) return;
       setBusyKey(m.key);
       const tid = toast.loading(t("toast.uninstalling"));
       try {
@@ -330,20 +286,6 @@ export default function MyMods() {
 
   return (
     <div className="flex h-full flex-col p-8">
-      { }
-      {dragOver && (
-        <div className="pointer-events-none fixed inset-0 z-[60] flex items-center justify-center bg-primary/15 backdrop-blur-sm">
-          <div className="flex flex-col items-center gap-3 rounded-2xl border-2 border-dashed border-primary bg-card px-14 py-10 shadow-2xl">
-            <FolderInput className="h-14 w-14 text-primary" />
-            <p className="text-xl font-semibold text-foreground">
-              {t("dropOverlay.title")}
-            </p>
-            <p className="text-sm text-muted-foreground">
-              {t("dropOverlay.hint")}
-            </p>
-          </div>
-        </div>
-      )}
       <PageHeader
         title={t("title")}
         count={counts.all}
@@ -443,10 +385,7 @@ export default function MyMods() {
 
       { }
       <div
-        className={cn(
-          "mt-4 flex-1 overflow-y-auto rounded-xl p-0.5 transition-shadow",
-          dragOver && "ring-2 ring-primary ring-offset-2 ring-offset-background",
-        )}
+        className="mt-4 flex-1 overflow-y-auto rounded-xl p-0.5"
       >
         {loading && managed.length === 0 ? (
           <div className="space-y-1.5">

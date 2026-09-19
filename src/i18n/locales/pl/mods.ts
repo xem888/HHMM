@@ -61,6 +61,12 @@ const mods = {
     uninstall: "Odinstaluj",
   },
 
+  uninstallConfirm: {
+    title: "Odinstalować {{name}}?",
+    workshop: "Pliki moda zostaną usunięte z gry. Subskrypcja pozostaje aktywna, więc możesz zainstalować go ponownie w dowolnej chwili.",
+    local: "Ten mod został zainstalowany ręcznie, więc HHMM nie ma jego kopii. Pliki zostaną trwale usunięte i nie będzie można ich przywrócić.",
+  },
+
   empty: {
     none: {
       title: "Brak modów",

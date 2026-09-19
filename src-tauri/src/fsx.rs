@@ -19,9 +19,17 @@ pub fn move_file(from: &Path, to: &Path) -> AppResult<()> {
     match fs::rename(from, to) {
         Ok(()) => Ok(()),
         Err(_) => {
-            fs::copy(from, to)?;
+            let tmp = sibling(to, "hhmm-tmp");
+            if let Err(e) = fs::copy(from, &tmp) {
+                let _ = fs::remove_file(&tmp);
+                return Err(e.into());
+            }
             if let Err(e) = fs::remove_file(from) {
-                let _ = fs::remove_file(to);
+                let _ = fs::remove_file(&tmp);
+                return Err(e.into());
+            }
+            if let Err(e) = fs::rename(&tmp, to) {
+                let _ = fs::rename(&tmp, from);
                 return Err(e.into());
             }
             Ok(())
@@ -33,7 +41,15 @@ pub fn copy_file(from: &Path, to: &Path) -> AppResult<()> {
     if let Some(parent) = to.parent() {
         fs::create_dir_all(parent)?;
     }
-    fs::copy(from, to)?;
+    let tmp = sibling(to, "hhmm-tmp");
+    if let Err(e) = fs::copy(from, &tmp) {
+        let _ = fs::remove_file(&tmp);
+        return Err(e.into());
+    }
+    if let Err(e) = fs::rename(&tmp, to) {
+        let _ = fs::remove_file(&tmp);
+        return Err(e.into());
+    }
     Ok(())
 }
 

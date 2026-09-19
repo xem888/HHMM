@@ -61,6 +61,12 @@ const mods = {
     uninstall: "解除安裝",
   },
 
+  uninstallConfirm: {
+    title: "解除安裝 {{name}}？",
+    workshop: "它的檔案會從遊戲中移除。訂閱仍會保留，隨時可以重新安裝。",
+    local: "這個模組是手動安裝的，HHMM 沒有它的備份。檔案將被永久刪除，無法復原。",
+  },
+
   empty: {
     none: {
       title: "尚未安裝任何 mod",

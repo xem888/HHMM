@@ -43,6 +43,14 @@ pub fn load_manual_path() -> Option<GamePaths> {
 }
 
 pub fn detect_game() -> AppResult<(GamePaths, String)> {
+    if let Ok(root) = std::env::var("HHMM_GAME_ROOT") {
+        let gp = GamePaths::new(std::path::PathBuf::from(&root));
+        if gp.exe().exists() {
+            log::warn!("HHMM_GAME_ROOT override active: {}", root);
+            return Ok((gp, "HHMM_GAME_ROOT".to_string()));
+        }
+        log::warn!("HHMM_GAME_ROOT is set but {} is missing there; ignoring", GAME_EXE);
+    }
     let sp = registry::steam_path()?;
     let libs = vdf::library_steamapps_dirs(&sp)?;
     for sa in &libs {

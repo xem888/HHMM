@@ -1,4 +1,4 @@
-use super::WorkshopItem;
+use super::{tree, WorkshopItem};
 use crate::fsx;
 use crate::paths::{GamePaths, APP_ID};
 use std::path::PathBuf;
@@ -11,6 +11,10 @@ pub fn workshop_content_dir(gp: &GamePaths) -> Option<PathBuf> {
             .join("content")
             .join(APP_ID),
     )
+}
+
+pub fn is_valid_item_id(id: &str) -> bool {
+    !id.is_empty() && id.bytes().all(|b| b.is_ascii_digit())
 }
 
 pub fn scan_workshop(gp: &GamePaths) -> Vec<WorkshopItem> {
@@ -28,50 +32,37 @@ pub fn scan_workshop(gp: &GamePaths) -> Vec<WorkshopItem> {
             continue;
         }
         let item_id = entry.file_name().to_string_lossy().to_string();
-
-        let Ok(files_rd) = std::fs::read_dir(&item_dir) else {
+        if !is_valid_item_id(&item_id) {
             continue;
-        };
-        let files: Vec<PathBuf> = files_rd
-            .flatten()
-            .map(|e| e.path())
-            .filter(|p| p.is_file())
-            .collect();
-
-        let is_dll = |p: &PathBuf| super::is_dll_path(p);
-        let mut dlls: Vec<&PathBuf> = files.iter().filter(|p| is_dll(p)).collect();
-        dlls.sort_by_key(|p| {
-            p.file_name()
-                .map(|n| n.to_string_lossy().to_lowercase())
-                .unwrap_or_default()
-        });
-        let Some(&dll) = dlls.first() else {
-            continue;
-        };
-        if dlls.len() > 1 {
-            log::warn!(
-                "workshop item {}: {} dlls found, managing '{}' only (alphabetical); the others are never installed",
-                item_id,
-                dlls.len(),
-                dll.file_name().unwrap_or_default().to_string_lossy()
-            );
         }
 
-        let dll_name = dll.file_name().unwrap().to_string_lossy().to_string();
-        let extra_files = files
-            .iter()
-            .filter(|p| !is_dll(p))
-            .map(|p| p.file_name().unwrap().to_string_lossy().to_string())
-            .collect();
+        let files = tree::walk_files(&item_dir);
+        let Some(dll_rel) = tree::pick_main_dll(&files).cloned() else {
+            continue;
+        };
+        let dll = item_dir.join(dll_rel.replace('/', std::path::MAIN_SEPARATOR_STR));
 
         out.push(WorkshopItem {
             item_id,
-            dll_name,
+            dll_name: tree::rel_file_name(&dll_rel).to_string(),
             version: None,
-            hash: fsx::sha256_file_cached(dll).unwrap_or_default(),
-            mtime: fsx::mtime(dll).unwrap_or(0),
-            extra_files,
+            hash: fsx::sha256_file_cached(&dll).unwrap_or_default(),
+            mtime: fsx::mtime(&dll).unwrap_or(0),
+            extra_files: files.into_iter().filter(|f| *f != dll_rel).collect(),
+            dll_rel,
         });
     }
+    out.sort_by(|a, b| a.item_id.cmp(&b.item_id));
+    let mut seen = std::collections::HashSet::new();
+    out.retain(|w| {
+        let first = seen.insert(w.dll_name.to_lowercase());
+        if !first {
+            log::warn!(
+                "workshop items collide on dll '{}'; only the first (by item id) is managed",
+                w.dll_name
+            );
+        }
+        first
+    });
     out
 }

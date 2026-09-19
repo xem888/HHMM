@@ -1,8 +1,10 @@
 pub mod managed;
+pub mod manifest;
 pub mod scan;
 pub mod steam_api;
 pub mod sync;
 pub mod toggle;
+pub mod tree;
 pub mod workshop;
 
 use crate::paths::GamePaths;
@@ -13,6 +15,8 @@ use serde::{Deserialize, Serialize};
 pub struct ModEntry {
     pub id: String,
     pub dll_name: String,
+    #[serde(default)]
+    pub dll_rel: String,
     pub enabled: bool,
     pub version: Option<String>,
     pub hash: String,
@@ -27,6 +31,8 @@ pub struct ModEntry {
 pub struct WorkshopItem {
     pub item_id: String,
     pub dll_name: String,
+    #[serde(default)]
+    pub dll_rel: String,
     pub version: Option<String>,
     pub hash: String,
     pub mtime: i64,
@@ -132,18 +138,9 @@ pub fn is_dll_path(p: &std::path::Path) -> bool {
         .is_some_and(|e| e.eq_ignore_ascii_case("dll"))
 }
 
-pub fn find_dll_ci(dir: &std::path::Path, dll_name: &str) -> Option<String> {
-    let rd = std::fs::read_dir(dir).ok()?;
-    for e in rd.flatten() {
-        if !e.path().is_file() {
-            continue;
-        }
-        let n = e.file_name().to_string_lossy().to_string();
-        if n.eq_ignore_ascii_case(dll_name) {
-            return Some(n);
-        }
-    }
-    None
+pub fn find_dll_ci(side_root: &std::path::Path, dll_name: &str) -> Option<String> {
+    let files = tree::walk_files(side_root);
+    tree::find_dll_rel(&files, dll_name).cloned()
 }
 
 pub fn resolve_install_side(gp: &GamePaths, dll_name: &str, intent_disabled: bool) -> bool {
@@ -156,41 +153,29 @@ pub fn resolve_install_side(gp: &GamePaths, dll_name: &str, intent_disabled: boo
     }
 }
 
-pub fn cleanup_other_side(gp: &GamePaths, dll_name: &str, installed_disabled: bool) {
+pub fn cleanup_other_side(gp: &GamePaths, ctx: &tree::Ctx, dll_name: &str, installed_disabled: bool) {
     let other = if installed_disabled {
         gp.plugins()
     } else {
         gp.disabled()
     };
-    let Some(actual) = find_dll_ci(&other, dll_name) else {
+    let files = tree::walk_files(&other);
+    let Some(dll_rel) = tree::find_dll_rel(&files, dll_name).cloned() else {
         return;
     };
-    let stem = actual.rsplit_once('.').map(|(s, _)| s).unwrap_or(&actual);
     log::warn!(
         "duplicate '{}' found on both sides; removing the {} copy to keep the single-side invariant",
-        actual,
+        dll_rel,
         if installed_disabled { "plugins" } else { "disabled" }
     );
-    if let Err(e) = std::fs::remove_file(other.join(&actual)) {
-        log::warn!("cleanup duplicate dll '{}' failed: {}", actual, e);
-        return;
-    }
-    if let Ok(rd) = std::fs::read_dir(&other) {
-        let all_names: Vec<String> = rd
-            .flatten()
-            .filter(|e| e.path().is_file())
-            .map(|e| e.file_name().to_string_lossy().to_string())
-            .collect();
-        let mut stems = dll_stems_of(&all_names);
-        stems.push(stem.to_string());
-        for n in all_names {
-            if is_extra_file_of(&n, stem, &actual, &stems) {
-                if let Err(err) = std::fs::remove_file(other.join(&n)) {
-                    log::warn!("cleanup duplicate extra '{}' failed: {}", n, err);
-                }
-            }
+    let owned = ctx.owned(&files, &dll_rel);
+    for rel in &owned {
+        let removed = tree::rel_join(&other, rel).and_then(|p| Ok(std::fs::remove_file(p)?));
+        if let Err(e) = removed {
+            log::warn!("cleanup duplicate file '{}' failed: {}", rel, e);
         }
     }
+    tree::prune_empty_dirs(&other, &owned);
 }
 
 #[cfg(test)]
@@ -328,7 +313,8 @@ mod tests {
         std::fs::write(gp.disabled().join("a.DLL"), b"old").unwrap();
         std::fs::write(gp.disabled().join("a_data.csv"), b"old").unwrap();
         std::fs::write(gp.disabled().join("Other.dll"), b"keep").unwrap();
-        cleanup_other_side(&gp, "A.dll", false);
+        let ctx = super::tree::Ctx { manifest: Default::default(), ws: vec![] };
+        cleanup_other_side(&gp, &ctx, "A.dll", false);
         assert!(!gp.disabled().join("a.DLL").exists());
         assert!(!gp.disabled().join("a_data.csv").exists());
         assert!(gp.disabled().join("Other.dll").exists(), "unrelated mod must not be removed");

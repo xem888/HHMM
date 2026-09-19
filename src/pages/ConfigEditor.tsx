@@ -231,10 +231,11 @@ function metaParts(
   return parts;
 }
 
-export type ModCfgI18n = Record<
-  string,
-  Record<string, Record<string, string>>
->;
+type I18nTable = Record<string, Record<string, Record<string, string>>>;
+export interface ModCfgI18n {
+  entries: I18nTable;
+  labels: I18nTable;
+}
 
 function ControlRow({
   entry,
@@ -252,9 +253,10 @@ function ControlRow({
   const { t, i18n } = useTranslation("config");
   const c = entry.control;
   const translated =
-    modI18n[fileName]?.[entry.key]?.[i18n.language] ??
+    modI18n.entries[fileName]?.[entry.key]?.[i18n.language] ??
     cfgDescriptions[fileName]?.[entry.key]?.[i18n.language];
   const desc = translated ?? cleanDescription(entry.description);
+  const label = modI18n.labels[fileName]?.[entry.key]?.[i18n.language];
   const meta = metaParts(entry, {
     def: t("defaultLabel"),
     range: t("rangeLabel"),
@@ -266,7 +268,9 @@ function ControlRow({
       { }
       <div className="flex flex-col gap-1.5 lg:flex-row lg:items-center lg:justify-between lg:gap-4">
         <div className="flex min-w-0 items-center gap-1.5">
-          <span className="truncate text-sm font-medium">{entry.key}</span>
+          <span className="truncate text-sm font-medium" title={entry.key}>
+            {label ?? entry.key}
+          </span>
           {changed && (
             <span className="inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
           )}
@@ -358,7 +362,7 @@ export default function ConfigEditor() {
   const reduced = useReducedMotion();
   const location = useLocation();
   const [files, setFiles] = useState<CfgFileMeta[]>([]);
-  const [modI18n, setModI18n] = useState<ModCfgI18n>({});
+  const [modI18n, setModI18n] = useState<ModCfgI18n>({ entries: {}, labels: {} });
   const [listState, setListState] = useState<LoadState>("loading");
   const [sel, setSel] = useState<string | null>(null);
   const [cfg, setCfg] = useState<CfgFile | null>(null);
@@ -418,11 +422,13 @@ export default function ConfigEditor() {
     if (!target || listState !== "ready" || files.length === 0) return;
     const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, "");
     const nt = norm(target);
-    const match = files.find(
-      (f) =>
-        (f.pluginName && norm(f.pluginName).includes(nt)) ||
-        norm(f.fileName).includes(nt),
-    );
+    const hit = (f: (typeof files)[number], test: (s: string) => boolean) =>
+      (!!f.pluginName && test(norm(f.pluginName))) ||
+      test(norm(f.fileName.replace(/\.cfg$/i, "")));
+    const exact = files.filter((f) => hit(f, (s) => s === nt || s.endsWith(nt)));
+    const fuzzy = files.filter((f) => hit(f, (s) => s.includes(nt)));
+    const match =
+      exact.length === 1 ? exact[0] : fuzzy.length === 1 ? fuzzy[0] : undefined;
     if (match && match.fileName !== sel) void openFile(match.fileName);
   }, [location.state, listState, files]);
 

@@ -1,11 +1,11 @@
-use super::{scan, steam_api, workshop, ManagedMod, ManagedSource, ManagedState, ModEntry};
+use super::{scan, steam_api, sync, tree, ManagedMod, ManagedSource, ManagedState, ModEntry};
 use crate::paths::GamePaths;
 use std::collections::{HashMap, HashSet};
 
 pub fn list_managed(gp: &GamePaths) -> Vec<ManagedMod> {
-    let mut ws = workshop::scan_workshop(gp);
-    ws.sort_by(|a, b| a.item_id.cmp(&b.item_id));
-    let installed = scan::scan_installed(gp);
+    let ctx = tree::Ctx::load(gp);
+    let ws = &ctx.ws;
+    let installed = scan::scan_installed_with(gp, &ctx);
     let title_cache = steam_api::read_cache();
 
     let mut inst_map: HashMap<String, &ModEntry> = HashMap::new();
@@ -28,16 +28,8 @@ pub fn list_managed(gp: &GamePaths) -> Vec<ManagedMod> {
     let mut consumed: HashSet<String> = HashSet::new();
     let mut out: Vec<ManagedMod> = Vec::new();
 
-    let mut seen_ws: HashSet<String> = HashSet::new();
-    for w in &ws {
+    for w in ws {
         let key = w.dll_name.to_lowercase();
-        if !seen_ws.insert(key.clone()) {
-            log::warn!(
-                "workshop items collide on dll '{}'; only the first (by item id) is managed",
-                w.dll_name
-            );
-            continue;
-        }
         let id = dll_stem(&w.dll_name);
         let inst = inst_map.get(&key).copied();
         if inst.is_some() {
@@ -50,7 +42,7 @@ pub fn list_managed(gp: &GamePaths) -> Vec<ManagedMod> {
                 } else {
                     ManagedState::Disabled
                 },
-                m.hash != w.hash,
+                sync::is_updatable(gp, &ctx, w, m),
                 m.size,
                 m.mtime,
             ),

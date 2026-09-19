@@ -12,13 +12,14 @@ import { Sidebar } from "@/components/layout/Sidebar";
 import { TitleBar } from "@/components/layout/TitleBar";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
+import { DropInstall } from "@/components/DropInstall";
 import { confirm } from "@/store/useConfirm";
 import { hasUnsaved } from "@/lib/unsaved";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { useGameStore } from "@/store/useGameStore";
 import { useAppStore } from "@/store/useAppStore";
 import { useTranslation } from "react-i18next";
-import { call, CMD } from "@/lib/ipc";
+import { call, CMD, EVT, on } from "@/lib/ipc";
 import { checkForUpdate } from "@/lib/updater";
 import { DURATION, EASING } from "@/lib/motion";
 import Dashboard from "@/pages/Dashboard";
@@ -132,14 +133,12 @@ export default function App() {
   }, [init]);
 
   useEffect(() => {
-    const w = getCurrentWindow();
-    const unlistenP = w.onCloseRequested(async (e) => {
-      e.preventDefault();
-      if (useAppStore.getState().minimizeToTray) {
-        void w.hide();
-        return;
-      }
+    const requestQuit = async () => {
       if (hasUnsaved()) {
+        const win = getCurrentWindow();
+        await win.show().catch(() => {});
+        await win.unminimize().catch(() => {});
+        await win.setFocus().catch(() => {});
         const go = await confirm({
           title: t("unsaved.title"),
           description: t("unsaved.description"),
@@ -149,9 +148,20 @@ export default function App() {
         if (!go) return;
       }
       call(CMD.quitApp).catch((e) => console.warn("quit_app failed:", e));
+    };
+    const w = getCurrentWindow();
+    const unlistenP = w.onCloseRequested(async (e) => {
+      e.preventDefault();
+      if (useAppStore.getState().minimizeToTray) {
+        void w.hide();
+        return;
+      }
+      await requestQuit();
     });
+    const unlistenQuitP = on(EVT.quitRequested, () => void requestQuit());
     return () => {
       void unlistenP.then((f) => f());
+      void unlistenQuitP.then((f) => f());
     };
   }, [t]);
 
@@ -186,6 +196,7 @@ export default function App() {
       { }
       <Toaster richColors closeButton position="bottom-right" theme={theme} />
       <ConfirmDialog />
+      <DropInstall />
     </HashRouter>
   );
 }

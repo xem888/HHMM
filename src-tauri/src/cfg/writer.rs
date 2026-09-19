@@ -3,6 +3,10 @@ use crate::error::AppResult;
 use crate::fsx::atomic_write;
 use std::path::Path;
 
+fn logical(content: &str) -> &str {
+    content.trim().trim_start_matches('\u{feff}').trim_start()
+}
+
 pub fn apply_changes(raw: &str, changes: &[CfgChange]) -> String {
     let mut out = String::with_capacity(raw.len() + 32);
     let mut current_section = String::new();
@@ -10,7 +14,7 @@ pub fn apply_changes(raw: &str, changes: &[CfgChange]) -> String {
     for line_with_eol in raw.split_inclusive('\n') {
         let content = line_with_eol.trim_end_matches('\n').trim_end_matches('\r');
         let eol = &line_with_eol[content.len()..];
-        let trimmed = content.trim();
+        let trimmed = logical(content);
 
         if trimmed.starts_with('[') && trimmed.ends_with(']') {
             current_section = trimmed[1..trimmed.len() - 1].to_string();
@@ -24,7 +28,7 @@ pub fn apply_changes(raw: &str, changes: &[CfgChange]) -> String {
         }
 
         if let Some(eq) = content.find('=') {
-            let key = content[..eq].trim();
+            let key = logical(&content[..eq]);
             if let Some(ch) = changes
                 .iter()
                 .find(|c| c.section == current_section && c.key == key)
@@ -65,7 +69,7 @@ pub fn ensure_value(raw: &str, section: &str, key: &str, value: &str) -> (String
     let mut value_ok = false;
     for line_with_eol in raw.split_inclusive('\n') {
         let content = line_with_eol.trim_end_matches('\n').trim_end_matches('\r');
-        let trimmed = content.trim();
+        let trimmed = logical(content);
         if trimmed.starts_with('[') && trimmed.ends_with(']') {
             current_section = trimmed[1..trimmed.len() - 1].to_string();
             continue;
@@ -74,7 +78,7 @@ pub fn ensure_value(raw: &str, section: &str, key: &str, value: &str) -> (String
             continue;
         }
         if let Some(eq) = content.find('=') {
-            if current_section == section && content[..eq].trim() == key {
+            if current_section == section && logical(&content[..eq]) == key {
                 key_exists = true;
                 value_ok = content[eq + 1..].trim() == value;
                 break;
@@ -105,7 +109,7 @@ pub fn ensure_value(raw: &str, section: &str, key: &str, value: &str) -> (String
             continue;
         }
         let content = line_with_eol.trim_end_matches('\n').trim_end_matches('\r');
-        let trimmed = content.trim();
+        let trimmed = logical(content);
         if trimmed.starts_with('[')
             && trimmed.ends_with(']')
             && trimmed[1..trimmed.len() - 1] == *section
@@ -151,9 +155,22 @@ pub fn ensure_file_value(path: &Path, section: &str, key: &str, value: &str) -> 
 
 #[cfg(test)]
 mod tests {
-    use super::ensure_value;
+    use super::{apply_changes, ensure_value, CfgChange};
 
     const BASE: &str = "## Settings file was created by BepInEx\r\n\r\n[Chainloader]\r\n\r\n## If enabled, hides BepInEx Manager GameObject from Unity.\r\n# Setting type: Boolean\r\n# Default value: false\r\nHideManagerGameObject = false\r\n\r\n[Logging.Console]\r\n\r\nEnabled = true\r\n";
+
+    #[test]
+    fn bom_on_first_line_does_not_hide_the_first_section() {
+        let raw = "\u{feff}[General]\r\nSpeed = 1\r\n";
+        let out = apply_changes(
+            raw,
+            &[CfgChange { section: "General".into(), key: "Speed".into(), value: "2".into() }],
+        );
+        assert_eq!(out, "\u{feff}[General]\r\nSpeed = 2\r\n");
+        let (out, changed) = ensure_value(raw, "General", "Speed", "1");
+        assert!(!changed);
+        assert_eq!(out, raw);
+    }
 
     #[test]
     fn ensure_replaces_existing_false_preserving_rest() {

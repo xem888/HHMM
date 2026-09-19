@@ -61,6 +61,12 @@ const mods = {
     uninstall: "Desinstalar",
   },
 
+  uninstallConfirm: {
+    title: "Desinstalar {{name}}?",
+    workshop: "Os ficheiros serão removidos do jogo. A subscrição mantém-se, pelo que pode voltar a instalá-lo quando quiser.",
+    local: "Este mod foi instalado manualmente, por isso o HHMM não tem nenhuma cópia dele. Os ficheiros serão eliminados permanentemente e não poderão ser recuperados.",
+  },
+
   empty: {
     none: {
       title: "Ainda não há mods",
